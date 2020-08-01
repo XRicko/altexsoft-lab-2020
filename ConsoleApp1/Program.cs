@@ -13,8 +13,6 @@ namespace ConsoleApp1
             {
                 Console.WriteLine("Decide what you wanna do: \n 1 - work with text file \n 2 - browse through folders \n 3 - exit ");
                 string mode = Console.ReadLine();
-
-                string text = "";
                 string path;
 
                 switch (mode)
@@ -24,21 +22,25 @@ namespace ConsoleApp1
 
                         try
                         {
-                            do
+                            string text;
+
+                            while (true)
                             {
                                 Console.Write("Type path to the file: ");
                                 path = Console.ReadLine();
+
                                 if (!File.Exists(path))
-                                    Console.WriteLine("Invalid path\n");
+                                    Console.WriteLine("\nInvalid path\n");
                                 else
                                 {
                                     text = File.ReadAllText(path);
+                                    break;
                                 }
-                            } while (!File.Exists(path));
+                            }
 
                             Console.Clear();
+                            Console.WriteLine("Choose an option: \n 1 - remove symbols in text \n 2 - number of words in text and see every 10th word \n 3 - 3rd sentence backwards");
 
-                            Console.WriteLine("Choose option: \n 1 - remove symbols in text \n 2 - number of words in text and see every 10th word \n 3 - 3rd sentence backwards");
                             string option = Console.ReadLine();
 
                             if (option == "1")
@@ -55,13 +57,13 @@ namespace ConsoleApp1
                                     File.WriteAllText(path, replaced);
                                 }
                                 else
-                                    Console.WriteLine("No such symbol(s) in the text\n");
+                                    Console.WriteLine("\nNo such symbol(s) in the text\n");
                             }
                             else if (option == "2")
                             {
                                 string noPunct = TextManager.DeletePunctuation(text);
                                 string[] words = noPunct.Split(new string[] { " ", "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries);
-                                Console.WriteLine("Words in text: " + words.Length + "\n");
+                                Console.WriteLine("\nWords in text: " + words.Length + "\n");
 
                                 int nthWord = 10;
                                 List<string> nWords = TextManager.GetEveryNthWord(words, nthWord);
@@ -88,7 +90,7 @@ namespace ConsoleApp1
                                 Console.WriteLine($"{nthSentence} sentence backwards: " + TextManager.ReverseString(sentences[nthSentence - 1]) + "\n");
                             }
                             else
-                                Console.WriteLine("Invalid input\n");
+                                Console.WriteLine("\nInvalid input\n");
                         }
                         catch (Exception e)
                         {
@@ -104,40 +106,67 @@ namespace ConsoleApp1
                         {
                             path = Console.ReadLine();
                             List<string> dirs = Directory.GetDirectories(path).ToList();
-                            string browseMode = "";
-                            int id = 0;
 
-                            do
+                            while (true)
                             {
                                 if (dirs.Count == 0)
-                                    Console.WriteLine("No folders here\n");
+                                {
+                                    Console.WriteLine("\nNo folders here\n");
+                                    break;
+                                }
                                 else
                                 {
                                     dirs.Sort();
-                                    ShowDirs(dirs);
 
-                                    Console.Write("Choose folder to see files/directories in it (e.g. 1f - for files, 1d - for directories): ");
-                                    browseMode = Console.ReadLine();
-                                    id = Convert.ToInt32(browseMode.Remove(browseMode.Length - 1));
-
-                                    path = dirs[id];
-                                    dirs = Directory.GetDirectories(path).ToList();
-                                }
-                            } while (browseMode.EndsWith("d"));
-
-                            if (browseMode.EndsWith("f"))
-                            {
-                                List<string> files = Directory.GetFiles(dirs[id]).ToList();
-
-                                if (files.Count == 0)
-                                    Console.WriteLine("No files here\n");
-                                else
-                                {
-                                    files.Sort();
-
-                                    foreach (var file in files)
+                                    Console.WriteLine("\n0 \t Up");
+                                    for (int i = 0; i < dirs.Count; i++)
                                     {
-                                        Console.WriteLine(Path.GetFileName(file));
+                                        Console.WriteLine(i + 1 + "\t" + dirs[i]);
+                                    }
+
+                                    Console.Write("\nChoose folder to see files/directories in it (e.g. 1f - for files, 1d - for directories, 0 - up): ");
+
+                                    string browseMode = Console.ReadLine();
+                                    int id;
+
+                                    if (browseMode == "0")
+                                    {
+                                        id = 0;
+                                        string currDir = dirs[0].Substring(0, dirs[0].LastIndexOf('\\'));
+                                        DirectoryInfo parentDir = Directory.GetParent(currDir);
+
+                                        if (parentDir == null)
+                                            Console.WriteLine("\nNo parent folder");
+                                        else
+                                            dirs = Directory.GetDirectories(parentDir.FullName).ToList();
+                                    }
+                                    else if (browseMode.EndsWith("d") || browseMode.EndsWith("f"))
+                                    {
+                                        id = Convert.ToInt32(browseMode.Remove(browseMode.Length - 1));
+
+                                        if (browseMode.EndsWith("d"))
+                                            dirs = Directory.GetDirectories(dirs[id - 1]).ToList();
+                                        else
+                                        {
+                                            List<string> files = Directory.GetFiles(dirs[id - 1]).ToList();
+
+                                            if (files.Count == 0)
+                                                Console.WriteLine("No files here\n");
+                                            else
+                                            {
+                                                files.Sort();
+
+                                                foreach (var file in files)
+                                                {
+                                                    Console.WriteLine(Path.GetFileName(file));
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Ivalid input\n");
+                                        break;
                                     }
                                 }
                             }
@@ -151,16 +180,9 @@ namespace ConsoleApp1
                     case "3":
                         return;
                     default:
-                        Console.WriteLine("Invalid input\n");
+                        Console.WriteLine("\nInvalid input\n");
                         break;
                 }
-            }
-        }
-        static void ShowDirs(List<string> dirs)
-        {
-            for (int i = 0; i < dirs.Count; i++)
-            {
-                Console.WriteLine(i + "\t" + dirs[i]);
             }
         }
     }
