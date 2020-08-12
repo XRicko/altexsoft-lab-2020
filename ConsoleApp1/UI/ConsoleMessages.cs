@@ -2,7 +2,7 @@
 
 namespace ConsoleApp1
 {
-    class ConsoleMessages
+    static class ConsoleMessages
     {
         public static void Failure(string obj)
         {
