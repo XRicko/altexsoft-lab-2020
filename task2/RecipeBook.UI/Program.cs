@@ -87,10 +87,9 @@ namespace RecipeBook.UI
         static Recipe EnterRecipe(RecipeController recipeController, CategoryController categoryController, IngredientController ingredientController)
         {
             var name = Dialog("Enter name of recipe: ");
-
-            Category category = null;
             var categoryName = Dialog("Enter category (starting with subcats): ");
 
+            Category category;
 
             while (true)
             {
@@ -109,7 +108,7 @@ namespace RecipeBook.UI
                     break;
                 }
                 else
-                        Console.Write("Invalid input");                
+                    Console.Write("Invalid input");
             }
 
             var description = Dialog("Enter a brief description: ");
@@ -119,8 +118,10 @@ namespace RecipeBook.UI
 
             foreach (var item in GetWords(text))
             {
-                var recipeIngredient = new RecipeIngredient();
-                recipeIngredient.Ingredient = ingredientController.CreateIngredient(item);
+                var recipeIngredient = new RecipeIngredient
+                {
+                    Ingredient = ingredientController.CreateIngredient(item)
+                };
 
                 recipeIngredients.Add(recipeIngredient);
             }
@@ -131,13 +132,13 @@ namespace RecipeBook.UI
                 item.Amount = amount;
             }
 
-            int steps = Convert.ToInt32(Dialog("Enter amount of steps to cook this dish: "));
-            var instruction = new List<string>(steps);
+            int steps = ParseInt("amount of steps to cook this dish");
+            var instruction = new string[steps];
 
-            for (int i = 0; i < instruction.Capacity; i++)
+            for (int i = 0; i < instruction.Length; i++)
             {
                 var step = Dialog($"Enter step {i + 1}: ");
-                instruction.Add(step);
+                instruction[i] = step;
             }
 
             var duration = ParseDouble("duration in minutes");
@@ -150,6 +151,16 @@ namespace RecipeBook.UI
             while (true)
             {
                 if (double.TryParse(Dialog($"Enter {name}: "), out double value))
+                    return value;
+                else
+                    Console.Write($"Invalid input for {name}");
+            }
+        }
+        static int ParseInt(string name)
+        {
+            while (true)
+            {
+                if (int.TryParse(Dialog($"Enter {name}: "), out int value))
                     return value;
                 else
                     Console.Write($"Invalid input for {name}");

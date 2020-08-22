@@ -26,7 +26,7 @@ namespace RecipeBook.BL.Controllers
         {
             return Recipes.FindAll(r => r.Category.Name == name);
         }
-        public Recipe CreateRecipe(string name, Category category, string desription, List<RecipeIngredient> ingredients, List<string> instruction, double durationInMinutes)
+        public Recipe CreateRecipe(string name, Category category, string desription, List<RecipeIngredient> ingredients, string[] instruction, double durationInMinutes)
         {
             var recipe = GetItem(Recipes, ref name);
 

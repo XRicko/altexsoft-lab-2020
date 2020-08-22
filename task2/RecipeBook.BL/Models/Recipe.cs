@@ -8,10 +8,10 @@ namespace RecipeBook.BL.Models
         public string Description { get; }
         public Category Category { get; }
         public List<RecipeIngredient> Ingredients { get; }
-        public List<string> Instruction { get; }
+        public string[] Instruction { get; }
         public double DurationInMinutes { get; }
 
-        public Recipe(string name, Category category, string description, List<RecipeIngredient> ingredients, List<string> instruction, double durationInMinutes) : base(name)
+        public Recipe(string name, Category category, string description, List<RecipeIngredient> ingredients, string[] instruction, double durationInMinutes) : base(name)
         {
             if (String.IsNullOrWhiteSpace(description))
                 throw new ArgumentNullException("Description cannot be null", nameof(description));
