@@ -1,34 +1,19 @@
 ﻿using RecipeBook.BL.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RecipeBook.BL.Controllers
 {
     public class RecipeController : ControllerBase
     {
-        public List<Recipe> Recipes { get; }
-
-        private readonly CategoryController categoryController;
-        private readonly IngredientController ingredientController;
-
-        public RecipeController(CategoryController categoryController, IngredientController ingredientController)
-        {
-            Recipes = GetRecipes();
-            this.categoryController = categoryController;
-            this.ingredientController = ingredientController;
-        }
-
-        private List<Recipe> GetRecipes()
-        {
-            return Load<Recipe>();
-        }
         public List<Recipe> GetRecipesInCategory(string name)
         {
-            return Recipes.FindAll(r => r.Category.Name == name);
+            return unitOfWork.Recipes.Find(r => r.Category.Name == name).ToList();
         }
         public Recipe CreateRecipe(string name, Category category, string desription, List<RecipeIngredient> ingredients, string[] instruction, double durationInMinutes)
         {
-            var recipe = GetItem(Recipes, ref name);
+            var recipe = unitOfWork.Recipes.Get(ref name);
 
             if (recipe == null)
                 return new Recipe(name, category, desription, ingredients, instruction, durationInMinutes);
@@ -37,24 +22,22 @@ namespace RecipeBook.BL.Controllers
         }
         public void AddRecipe(Recipe recipe)
         {
-            bool isAdded = AddItem(Recipes, recipe);
+            CheckRecipeForExistence(recipe);
 
-            if (!isAdded)
-                throw new ArgumentException("This recipe already exists", nameof(recipe));
+            unitOfWork.Recipes.Add(recipe);
+            unitOfWork.Categories.Add(recipe.Category);
 
-            categoryController.AddCategory(recipe.Category);
             foreach (var recipeIngredient in recipe.Ingredients)
             {
-                ingredientController.AddIngredient(recipeIngredient.Ingredient);
+                unitOfWork.Ingredients.Add(recipeIngredient.Ingredient);
             }
 
-            Save();
+            unitOfWork.Save();
         }
-        private void Save()
+        private void CheckRecipeForExistence(Recipe recipe)
         {
-            Save(categoryController.Categories);
-            Save(Recipes);
-            Save(ingredientController.Ingredients);
+            if (unitOfWork.Recipes.Get(recipe) == null)
+                throw new ArgumentException("This recipe already exists", nameof(recipe));
         }
     }
 }

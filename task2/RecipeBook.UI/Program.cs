@@ -14,7 +14,7 @@ namespace RecipeBook.UI
         {
             var categoryController = new CategoryController();
             var ingredientController = new IngredientController();
-            var recipeController = new RecipeController(categoryController, ingredientController);
+            var recipeController = new RecipeController();
 
             while (true)
             {
@@ -37,7 +37,7 @@ namespace RecipeBook.UI
 
                         break;
                     case ConsoleKey.F:
-                        foreach (var item in ingredientController.Ingredients)
+                        foreach (var item in ingredientController.GetIngredients())
                         {
                             Console.WriteLine(item.Name);
                         }

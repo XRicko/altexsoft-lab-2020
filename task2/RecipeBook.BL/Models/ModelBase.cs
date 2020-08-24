@@ -9,7 +9,7 @@ namespace RecipeBook.BL.Models
 
         public ModelBase(string name)
         {
-            if (String.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException($"Name cannot be null", nameof(name));
 
             Name = name;
