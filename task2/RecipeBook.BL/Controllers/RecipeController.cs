@@ -36,7 +36,7 @@ namespace RecipeBook.BL.Controllers
         }
         private void CheckRecipeForExistence(Recipe recipe)
         {
-            if (unitOfWork.Recipes.Get(recipe) == null)
+            if (unitOfWork.Recipes.Get(recipe) != null)
                 throw new ArgumentException("This recipe already exists", nameof(recipe));
         }
     }

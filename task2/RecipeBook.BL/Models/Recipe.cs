@@ -13,7 +13,7 @@ namespace RecipeBook.BL.Models
 
         public Recipe(string name, Category category, string description, List<RecipeIngredient> ingredients, string[] instruction, double durationInMinutes) : base(name)
         {
-            if (String.IsNullOrWhiteSpace(description))
+            if (string.IsNullOrWhiteSpace(description))
                 throw new ArgumentNullException("Description cannot be null", nameof(description));
             if (durationInMinutes <= 0)
                 throw new ArgumentException("Duration cannot be 0 or less", nameof(durationInMinutes));
