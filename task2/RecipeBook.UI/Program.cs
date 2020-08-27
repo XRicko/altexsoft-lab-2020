@@ -1,5 +1,7 @@
-﻿using RecipeBook.BL.Controllers;
+﻿using Newtonsoft.Json;
+using RecipeBook.BL.Controllers;
 using RecipeBook.BL.Models;
+using RecipeBook.BL.Repository.Classes;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -12,9 +14,13 @@ namespace RecipeBook.UI
     {
         static void Main(string[] args)
         {
-            var categoryController = new CategoryController();
-            var ingredientController = new IngredientController();
-            var recipeController = new RecipeController();
+            var serializer = new JsonSerializer();
+            var manager = new JSONDataManager(serializer);
+            var unitOfWork = new UnitOfWork(manager);
+
+            var categoryController = new CategoryController(unitOfWork);
+            var ingredientController = new IngredientController(unitOfWork);
+            var recipeController = new RecipeController(unitOfWork);
 
             while (true)
             {
@@ -71,7 +77,8 @@ namespace RecipeBook.UI
                             else
                                 recipies = recipeController.GetRecipesInCategory(name);
 
-                            categories = categoryController.GetCategories(name);
+                            var category = categories.SingleOrDefault(c => c.Name == name);
+                            categories = categoryController.GetCategories(category.Id);
                         }
                         break;
                     case ConsoleKey.Q:

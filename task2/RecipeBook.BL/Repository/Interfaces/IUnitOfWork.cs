@@ -1,6 +1,6 @@
 ﻿namespace RecipeBook.BL.Repository.Interfaces
 {
-    interface IUnitOfWork
+    public interface IUnitOfWork
     {
         ICategoryRepository Categories { get; }
         IIngredientRepository Ingredients { get; }

@@ -1,4 +1,5 @@
 ﻿using RecipeBook.BL.Models;
+using RecipeBook.BL.Repository.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,16 +7,21 @@ namespace RecipeBook.BL.Controllers
 {
     public class CategoryController : ControllerBase
     {
+        public CategoryController(IUnitOfWork unitOfWork) : base(unitOfWork) { }
+
         public Category CreateCategory(string name, string parentName = null)
         {
-            var category = unitOfWork.Categories.Get(ref name);
+            name = StandardizeName(name);
+            var category = unitOfWork.Categories.Get(name);
 
             if (category == null)
             {
                 if (parentName != null)
                 {
-                    var parent = unitOfWork.Categories.Get(ref parentName);
+                    parentName = StandardizeName(parentName);
                     name = name + " " + parentName;
+
+                    var parent = unitOfWork.Categories.Get(parentName);
 
                     if (parent == null)
                     {
@@ -23,7 +29,7 @@ namespace RecipeBook.BL.Controllers
                         AddCategory(parent);
                     }
 
-                    return new Category(name, parent.Id, parent.Name);
+                    return new Category(name, parent.Id);
                 }
 
                 return new Category(name);
@@ -35,9 +41,9 @@ namespace RecipeBook.BL.Controllers
         {
             unitOfWork.Categories.Add(category);
         }
-        public List<Category> GetCategories(string name)
+        public List<Category> GetCategories(int? id)
         {
-            return unitOfWork.Categories.Find(c => c.ParentName == name).ToList();
+            return unitOfWork.Categories.Find(c => c.ParentId == id).ToList();
         }
     }
 }

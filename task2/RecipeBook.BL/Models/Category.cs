@@ -3,15 +3,11 @@
     public class Category : ModelBase
     {
         public int? ParentId { get; }
-        public string ParentName { get; }
 
-        public Category(string name, int? parentId = null, string parentName = null) : base(name)
+        public Category(string name, int? parentId = null) : base(name)
         {
-            if (parentId != null && parentName != null)
-            {
+            if (parentId != null)
                 ParentId = parentId;
-                ParentName = parentName;
-            }
         }
     }
 }

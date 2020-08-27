@@ -5,9 +5,9 @@ using System.Linq.Expressions;
 
 namespace RecipeBook.BL.Repository.Interfaces
 {
-    interface IRepository<T> where T : ModelBase
+    public interface IRepository<T> where T : ModelBase
     {
-        T Get(ref string name);
+        T Get(string name);
         T Get(T model);
         IEnumerable<T> GetAll();
         IEnumerable<T> Find(Expression<Func<T, bool>> predicate);

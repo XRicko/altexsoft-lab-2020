@@ -4,11 +4,17 @@ using System.IO;
 
 namespace RecipeBook.BL.Controllers
 {
-    class JSONDataManager : IDataManager
+    public class JSONDataManager : IDataManager
     {
+        private readonly JsonSerializer serializer;
+
+        public JSONDataManager(JsonSerializer serializer)
+        {
+            this.serializer = serializer;
+        }
+
         public void Save<T>(List<T> items)
         {
-            var serializer = new JsonSerializer();
             var fileName = Path.ChangeExtension(typeof(T).Name, "json");
 
             using (var file = new FileStream(fileName, FileMode.Create))
@@ -20,7 +26,6 @@ namespace RecipeBook.BL.Controllers
         }
         public List<T> Load<T>()
         {
-            var serializer = new JsonSerializer();
             var fileName = Path.ChangeExtension(typeof(T).Name, "json");
 
             using (var file = new FileStream(fileName, FileMode.OpenOrCreate))

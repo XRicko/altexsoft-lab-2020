@@ -3,7 +3,6 @@ using RecipeBook.BL.Models;
 using RecipeBook.BL.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -11,11 +10,12 @@ namespace RecipeBook.BL.Repository.Classes
 {
     class Repository<T> : IRepository<T> where T : ModelBase
     {
-        private readonly IDataManager manager = new JSONDataManager();
+        private readonly IDataManager manager;
         private readonly List<T> data;
 
-        public Repository()
+        public Repository(IDataManager manager)
         {
+            this.manager = manager;
             data = manager.Load<T>();
         }
 
@@ -28,14 +28,9 @@ namespace RecipeBook.BL.Repository.Classes
             var item = data.SingleOrDefault(x => x.Name == model.Name);
             return item;
         }
-        public T Get(ref string name)
+        public T Get(string name)
         {
-            name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower());
-            name = name.Trim();
-
-            var tempName = name;
-            var item = data.SingleOrDefault(x => x.Name == tempName);
-
+            var item = data.SingleOrDefault(x => x.Name == name);
             return item;
         }
         public void Add(T model)

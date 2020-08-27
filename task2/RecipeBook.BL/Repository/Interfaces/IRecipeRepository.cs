@@ -2,7 +2,7 @@
 
 namespace RecipeBook.BL.Repository.Interfaces
 {
-    interface IRecipeRepository : IRepository<Recipe>
+    public interface IRecipeRepository : IRepository<Recipe>
     {
     }
 }

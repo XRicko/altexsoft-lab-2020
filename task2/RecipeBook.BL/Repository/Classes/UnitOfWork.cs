@@ -4,19 +4,21 @@ using System.Linq;
 
 namespace RecipeBook.BL.Repository.Classes
 {
-    class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
-        private readonly IDataManager manager = new JSONDataManager();
+        private readonly IDataManager manager;
 
         public ICategoryRepository Categories { get; }
         public IIngredientRepository Ingredients { get; }
         public IRecipeRepository Recipes { get; }
 
-        public UnitOfWork()
+        public UnitOfWork(IDataManager manager)
         {
-            Categories = new CategoryRepository();
-            Ingredients = new IngredientRepository();
-            Recipes = new RecipeRepository();
+            this.manager = manager;
+
+            Categories = new CategoryRepository(this.manager);
+            Ingredients = new IngredientRepository(this.manager);
+            Recipes = new RecipeRepository(this.manager);
         }
 
         public void Save()

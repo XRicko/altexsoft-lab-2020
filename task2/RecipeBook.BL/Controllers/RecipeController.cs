@@ -1,4 +1,5 @@
 ﻿using RecipeBook.BL.Models;
+using RecipeBook.BL.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,13 +8,16 @@ namespace RecipeBook.BL.Controllers
 {
     public class RecipeController : ControllerBase
     {
+        public RecipeController(IUnitOfWork unitOfWork) : base(unitOfWork) { }
+
         public List<Recipe> GetRecipesInCategory(string name)
         {
             return unitOfWork.Recipes.Find(r => r.Category.Name == name).ToList();
         }
         public Recipe CreateRecipe(string name, Category category, string desription, List<RecipeIngredient> ingredients, string[] instruction, double durationInMinutes)
         {
-            var recipe = unitOfWork.Recipes.Get(ref name);
+            name = StandardizeName(name);
+            var recipe = unitOfWork.Recipes.Get(name);
 
             if (recipe == null)
                 return new Recipe(name, category, desription, ingredients, instruction, durationInMinutes);

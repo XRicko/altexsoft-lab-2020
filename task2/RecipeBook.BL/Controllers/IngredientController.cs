@@ -1,4 +1,5 @@
 ﻿using RecipeBook.BL.Models;
+using RecipeBook.BL.Repository.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,9 +7,12 @@ namespace RecipeBook.BL.Controllers
 {
     public class IngredientController : ControllerBase
     {
+        public IngredientController(IUnitOfWork unitOfWork) : base(unitOfWork) { }
+
         public Ingredient CreateIngredient(string name)
         {
-            var ingredient = unitOfWork.Ingredients.Get(ref name);
+            name = StandardizeName(name);
+            var ingredient = unitOfWork.Ingredients.Get(name);
 
             if (ingredient == null)
                 return new Ingredient(name);
