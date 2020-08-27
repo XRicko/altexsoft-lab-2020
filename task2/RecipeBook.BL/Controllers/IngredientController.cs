@@ -21,7 +21,8 @@ namespace RecipeBook.BL.Controllers
         }
         public void AddIngredient(Ingredient ingredient)
         {
-            unitOfWork.Ingredients.Add(ingredient);
+            if (unitOfWork.Ingredients.Get(ingredient) == null)
+                unitOfWork.Ingredients.Add(ingredient);
         }
         public List<Ingredient> GetIngredients()
         {

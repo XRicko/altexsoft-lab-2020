@@ -14,32 +14,30 @@ namespace RecipeBook.BL.Controllers
             name = StandardizeName(name);
             var category = unitOfWork.Categories.Get(name);
 
-            if (category == null)
+            if (category != null)
+                return category;
+            if (!string.IsNullOrWhiteSpace(parentName))
             {
-                if (parentName != null)
+                parentName = StandardizeName(parentName);
+                name = name + " " + parentName;
+
+                var parent = unitOfWork.Categories.Get(parentName);
+
+                if (parent == null)
                 {
-                    parentName = StandardizeName(parentName);
-                    name = name + " " + parentName;
-
-                    var parent = unitOfWork.Categories.Get(parentName);
-
-                    if (parent == null)
-                    {
-                        parent = new Category(parentName);
-                        AddCategory(parent);
-                    }
-
-                    return new Category(name, parent.Id);
+                    parent = new Category(parentName);
+                    AddCategory(parent);
                 }
 
-                return new Category(name);
+                return new Category(name, parent.Id);
             }
 
-            return category;
+            return new Category(name);
         }
         public void AddCategory(Category category)
         {
-            unitOfWork.Categories.Add(category);
+            if (unitOfWork.Categories.Get(category) == null)
+                unitOfWork.Categories.Add(category);
         }
         public List<Category> GetCategories(int? id)
         {

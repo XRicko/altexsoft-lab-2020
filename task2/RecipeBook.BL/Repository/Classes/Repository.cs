@@ -35,15 +35,10 @@ namespace RecipeBook.BL.Repository.Classes
         }
         public void Add(T model)
         {
-            var item = Get(model);
+            if (data.Count != 0)
+                model.Id = data.Last().Id + 1;
 
-            if (item == null)
-            {
-                if (data.Count != 0)
-                    model.Id = data.Last().Id + 1;
-
-                data.Add(model);
-            }
+            data.Add(model);
         }
         public IEnumerable<T> Find(Expression<Func<T, bool>> expression)
         {
