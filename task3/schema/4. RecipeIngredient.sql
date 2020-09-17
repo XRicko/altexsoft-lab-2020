@@ -1,7 +1,7 @@
-CREATE TABLE RecipeBook.dbo.RecipeIngredient
+CREATE TABLE RecipeIngredient
 (
 	Id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	RecipeId INT NOT NULL FOREIGN KEY REFERENCES RecipeBook.dbo.Recipe(RecipeId),
-	IngredientId INT NOT NULL FOREIGN KEY REFERENCES RecipeBook.dbo.Ingredient(IngredientId),
+	RecipeId INT NOT NULL FOREIGN KEY REFERENCES Recipe(RecipeId),
+	IngredientId INT NOT NULL FOREIGN KEY REFERENCES Ingredient(IngredientId),
 	Amount NVARCHAR(50) NOT NULL
 );
