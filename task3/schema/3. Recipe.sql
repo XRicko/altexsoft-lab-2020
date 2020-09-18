@@ -5,5 +5,5 @@ CREATE TABLE Recipe
 	Description NVARCHAR(255) NOT NULL,
 	CategoryId INT NOT NULL FOREIGN KEY REFERENCES Category(CategoryId),
 	Instruction TEXT NOT NULL,
-	DurationInMinutes DECIMAL NOT NULL
+	DurationInMinutes FLOAT NOT NULL
 );
