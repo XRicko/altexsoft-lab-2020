@@ -1,11 +1,10 @@
-﻿using RecipeBook.Core.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace RecipeBook.Core.Repository.Interfaces
+namespace RecipeBook.SharedKernel.Interfaces
 {
-    public interface IRepository<TEntity> where TEntity : EntityBase
+    public interface IRepository<TEntity> where TEntity : BaseEntity
     {
         TEntity Get(string name);
         TEntity Get(TEntity entity);

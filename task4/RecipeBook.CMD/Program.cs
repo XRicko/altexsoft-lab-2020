@@ -2,6 +2,7 @@
 using RecipeBook.Core.Entities;
 using RecipeBook.Core.Repository.Classes;
 using RecipeBook.Infrastructure.Data;
+using RecipeBook.SharedKernel;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -172,7 +173,7 @@ namespace RecipeBook.UI
             return words;
         }
 
-        static void ShowItems<T>(List<T> models) where T : EntityBase
+        static void ShowItems<T>(List<T> models) where T : BaseEntity
         {
             foreach (var item in models)
             {

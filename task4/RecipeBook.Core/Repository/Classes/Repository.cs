@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RecipeBook.Core.Entities;
-using RecipeBook.Core.Repository.Interfaces;
+using RecipeBook.SharedKernel;
+using RecipeBook.SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 
 namespace RecipeBook.Core.Repository.Classes
 {
-    class Repository<TEntity> : IRepository<TEntity> where TEntity : EntityBase
+    class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
     {
         protected readonly DbContext context;
 

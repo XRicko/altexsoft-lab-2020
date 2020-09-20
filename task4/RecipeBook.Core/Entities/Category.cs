@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using RecipeBook.SharedKernel;
+using System.Collections.Generic;
 
 namespace RecipeBook.Core.Entities
 {
-    public partial class Category : EntityBase
+    public partial class Category : BaseEntity
     {
         public int? ParentId { get; private set; }
         public virtual Category Parent { get; private set; }

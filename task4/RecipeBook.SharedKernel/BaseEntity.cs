@@ -1,15 +1,15 @@
 ﻿using System;
 
-namespace RecipeBook.Core.Entities
+namespace RecipeBook.SharedKernel
 {
-    public class EntityBase
+    public class BaseEntity
     {
         public int Id { get; private set; }
         public string Name { get; private set; }
 
-        public EntityBase() { }
+        public BaseEntity() { }
 
-        public EntityBase(string name)
+        public BaseEntity(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException($"Name cannot be null", nameof(name));

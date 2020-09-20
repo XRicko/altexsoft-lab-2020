@@ -1,9 +1,10 @@
-﻿using System;
+﻿using RecipeBook.SharedKernel;
+using System;
 using System.Collections.Generic;
 
 namespace RecipeBook.Core.Entities
 {
-    public partial class Recipe : EntityBase
+    public partial class Recipe : BaseEntity
     {
         public string Description { get; private set; }
         public int CategoryId { get; private set; }
