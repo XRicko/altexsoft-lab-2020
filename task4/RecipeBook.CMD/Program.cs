@@ -9,7 +9,6 @@ using RecipeBook.SharedKernel;
 using RecipeBook.SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -77,7 +76,6 @@ namespace RecipeBook.UI
                             ShowItems(recipies);
 
                             var name = Request("Enter name to go next or to see full recipe: ");
-                            name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower());
 
                             var rec = recipies.SingleOrDefault(r => r.Name == name);
                             var category = categories.SingleOrDefault(c => c.Name == name);
@@ -184,7 +182,7 @@ namespace RecipeBook.UI
             return words;
         }
 
-        static void ShowItems<T>(List<T> models) where T : BaseEntity
+        static void ShowItems<T>(IEnumerable<T> models) where T : BaseEntity
         {
             foreach (var item in models)
             {

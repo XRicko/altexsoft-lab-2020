@@ -1,7 +1,6 @@
 ﻿using RecipeBook.Core.Entities;
 using RecipeBook.SharedKernel.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace RecipeBook.Core.Controllers
@@ -12,34 +11,33 @@ namespace RecipeBook.Core.Controllers
 
         public async Task<Category> CreateCategoryAsync(string name, string parentName = null)
         {
-            name = StandardizeName(name);
-            var category = await unitOfWork.Repository.GetAsync<Category>(name);
+            var standardizedName = StandardizeName(name);
+            var category = await UnitOfWork.Repository.GetAsync<Category>(standardizedName);
 
             if (category != null)
                 return category;
             if (!string.IsNullOrWhiteSpace(parentName))
             {
-                parentName = StandardizeName(parentName);
-                name = name + " " + parentName;
+                var standardizedParentName = StandardizeName(parentName);
+                var subCategoryName = standardizedName + " " + standardizedParentName;
 
-                var parent = await unitOfWork.Repository.GetAsync<Category>(parentName);
+                var parent = await UnitOfWork.Repository.GetAsync<Category>(standardizedParentName);
 
                 if (parent == null)
                 {
-                    parent = new Category(parentName);
+                    parent = new Category(standardizedParentName);
                     await AddAsync(parent);
                 }
 
-                return new Category(name, parent.Id);
+                return new Category(subCategoryName, parent.Id);
             }
 
-            return new Category(name);
+            return new Category(standardizedName);
         }
 
-        public async Task<List<Category>> GetCategoriesAsync(int? id)
+        public Task<IEnumerable<Category>> GetCategoriesAsync(int? id)
         {
-            var categories = await unitOfWork.Repository.FindAsync<Category>(c => c.ParentId == id);
-            return categories.ToList();
+            return UnitOfWork.Repository.FindAsync<Category>(c => c.ParentId == id);
         }
     }
 }

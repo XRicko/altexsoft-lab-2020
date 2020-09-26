@@ -2,56 +2,52 @@
 using RecipeBook.SharedKernel.Interfaces;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace RecipeBook.Core.Controllers
 {
     public abstract class ControllerBase
     {
-        protected readonly IUnitOfWork unitOfWork;
+        protected IUnitOfWork UnitOfWork { get; }
 
         public ControllerBase(IUnitOfWork unitOfWork)
         {
-            this.unitOfWork = unitOfWork;
+            UnitOfWork = unitOfWork;
         }
 
-        public async Task<List<T>> GetItemsAsync<T>() where T : BaseEntity
+        public Task<IEnumerable<T>> GetItemsAsync<T>() where T : BaseEntity
         {
-            var items = await unitOfWork.Repository.GetAllAsync<T>();
-            return items.ToList();
+            return UnitOfWork.Repository.GetAllAsync<T>();
         }
 
         public async Task AddAsync<T>(T entity) where T : BaseEntity
         {
-            var ing = await unitOfWork.Repository.GetAsync(entity);
+            var ing = await UnitOfWork.Repository.GetAsync(entity);
 
             if (ing == null)
-                await unitOfWork.Repository.AddAsync(entity);
+                await UnitOfWork.Repository.AddAsync(entity);
         }
 
         public void Remove<T>(T entity) where T : BaseEntity
         {
-            unitOfWork.Repository.Remove(entity);
-            unitOfWork.SaveAsync();
+            UnitOfWork.Repository.Remove(entity);
+            UnitOfWork.SaveAsync();
         }
 
         public async Task RemoveAsync<T>(string name) where T : BaseEntity
         {
-            StandardizeName(name);
+            var entity = await UnitOfWork.Repository.GetAsync<T>(StandardizeName(name));
+            UnitOfWork.Repository.Remove(entity);
 
-            var entity = await unitOfWork.Repository.GetAsync<T>(name);
-            unitOfWork.Repository.Remove(entity);
-
-            unitOfWork.SaveAsync();
+            UnitOfWork.SaveAsync();
         }
 
         protected string StandardizeName(string name)
         {
-            name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower());
-            name = name.Trim();
+            if (string.IsNullOrWhiteSpace(name))
+                return null;
 
-            return name;
+            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower()).Trim();
         }
     }
 }

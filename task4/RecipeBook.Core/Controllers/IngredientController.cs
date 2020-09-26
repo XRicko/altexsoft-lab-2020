@@ -10,11 +10,11 @@ namespace RecipeBook.Core.Controllers
 
         public async Task<Ingredient> CreateIngredientAsync(string name)
         {
-            name = StandardizeName(name);
-            var ingredient = await unitOfWork.Repository.GetAsync<Ingredient>(name);
+            var standardizedName = StandardizeName(name);
+            var ingredient = await UnitOfWork.Repository.GetAsync<Ingredient>(standardizedName);
 
             if (ingredient == null)
-                return new Ingredient(name);
+                return new Ingredient(standardizedName);
 
             return ingredient;
         }

@@ -2,7 +2,6 @@
 using RecipeBook.SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace RecipeBook.Core.Controllers
@@ -11,19 +10,18 @@ namespace RecipeBook.Core.Controllers
     {
         public RecipeController(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
-        public async Task<List<Recipe>> GetRecipesInCategoryAsync(string name)
+        public Task<IEnumerable<Recipe>> GetRecipesInCategoryAsync(string name)
         {
-            var recipes = await unitOfWork.Repository.FindAsync<Recipe>(r => r.Category.Name == name);
-            return recipes.ToList();
+            return UnitOfWork.Repository.FindAsync<Recipe>(r => r.Category.Name == StandardizeName(name));
         }
 
         public async Task<Recipe> CreateRecipeAsync(string name, Category category, string desription, List<RecipeIngredient> recipeIngredients, string instruction, double durationInMinutes)
         {
-            name = StandardizeName(name);
-            var recipe = await unitOfWork.Repository.GetAsync<Recipe>(name);
+            var standirdizedName = StandardizeName(name);
+            var recipe = await UnitOfWork.Repository.GetAsync<Recipe>(standirdizedName);
 
             if (recipe == null)
-                return new Recipe(name, category, desription, recipeIngredients, instruction, durationInMinutes);
+                return new Recipe(standirdizedName, category, desription, recipeIngredients, instruction, durationInMinutes);
 
             return recipe;
         }
@@ -40,12 +38,12 @@ namespace RecipeBook.Core.Controllers
                 await AddAsync(recipeIngredient.Ingredient);
             }
 
-            unitOfWork.SaveAsync();
+            UnitOfWork.SaveAsync();
         }
 
         private async Task CheckRecipeForExistenceAsync(Recipe recipe)
         {
-            var r = await unitOfWork.Repository.GetAsync(recipe);
+            var r = await UnitOfWork.Repository.GetAsync(recipe);
 
             if (r != null)
                 throw new ArgumentException("This recipe already exists", nameof(recipe));
