@@ -1,7 +1,6 @@
 ﻿using RecipeBook.Core.Entities;
-using RecipeBook.Core.Repository.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
+using RecipeBook.SharedKernel.Interfaces;
+using System.Threading.Tasks;
 
 namespace RecipeBook.Core.Controllers
 {
@@ -9,40 +8,15 @@ namespace RecipeBook.Core.Controllers
     {
         public IngredientController(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
-        public Ingredient CreateIngredient(string name)
+        public async Task<Ingredient> CreateIngredientAsync(string name)
         {
             name = StandardizeName(name);
-            var ingredient = unitOfWork.Ingredients.Get(name);
+            var ingredient = await unitOfWork.Repository.GetAsync<Ingredient>(name);
 
             if (ingredient == null)
                 return new Ingredient(name);
 
             return ingredient;
-        }
-
-        public void AddIngredient(Ingredient ingredient)
-        {
-            if (unitOfWork.Ingredients.Get(ingredient) == null)
-                unitOfWork.Ingredients.Add(ingredient);
-        }
-
-        public void RemoveIngredient(Ingredient ingredient)
-        {
-            unitOfWork.Ingredients.Remove(ingredient);
-            unitOfWork.Save();
-        }
-
-        public void RemoveIngredient(string name)
-        {
-            StandardizeName(name);
-            unitOfWork.Ingredients.Remove(name);
-
-            unitOfWork.Save();
-        }
-
-        public List<Ingredient> GetIngredients()
-        {
-            return unitOfWork.Ingredients.GetAll().ToList();
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using RecipeBook.Core.Entities;
-using System.IO;
 
 namespace RecipeBook.Infrastructure.Data
 {
@@ -18,22 +16,6 @@ namespace RecipeBook.Infrastructure.Data
         public virtual DbSet<Ingredient> Ingredient { get; set; }
         public virtual DbSet<Recipe> Recipe { get; set; }
         public virtual DbSet<RecipeIngredient> RecipeIngredient { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                var config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
-                .Build();
-
-                optionsBuilder
-                    .UseLazyLoadingProxies()
-                    .UseSqlServer(config.GetConnectionString("DefaultConnection"));
-
-            }
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

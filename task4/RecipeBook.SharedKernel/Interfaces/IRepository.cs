@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace RecipeBook.SharedKernel.Interfaces
 {
-    public interface IRepository<TEntity> where TEntity : BaseEntity
+    public interface IRepository
     {
-        TEntity Get(string name);
-        TEntity Get(TEntity entity);
-        IEnumerable<TEntity> GetAll();
-        IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate);
+        Task<T> GetAsync<T>(string name) where T : BaseEntity;
+        Task<T> GetAsync<T>(T entity) where T : BaseEntity;
+        Task<IEnumerable<T>> GetAllAsync<T>() where T : BaseEntity;
+        Task<IEnumerable<T>> FindAsync<T>(Expression<Func<T, bool>> predicate) where T : BaseEntity;
 
-        void Add(TEntity entity);
-        void Remove(TEntity entity);
-        void Remove(string name);
+        Task AddAsync<T>(T entity) where T : BaseEntity;
+        void Remove<T>(T entity) where T : BaseEntity;
     }
 }

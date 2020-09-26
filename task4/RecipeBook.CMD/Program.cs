@@ -1,26 +1,34 @@
-﻿using RecipeBook.Core.Controllers;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using RecipeBook.Core.Controllers;
 using RecipeBook.Core.Entities;
-using RecipeBook.Core.Repository.Classes;
-using RecipeBook.Infrastructure.Data;
+using RecipeBook.Infrastructure.Extensions;
 using RecipeBook.SharedKernel;
+using RecipeBook.SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace RecipeBook.UI
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            var db = new RecipeBookContext();
-            var unitOfWork = new UnitOfWork(db);
+            var host = CreateHostBuilder(args).Build();
+            var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
-            var categoryController = new CategoryController(unitOfWork);
-            var ingredientController = new IngredientController(unitOfWork);
-            var recipeController = new RecipeController(unitOfWork);
+            logger.LogInformation("Getting repository...");
+            var unitOfWork = host.Services.GetRequiredService<IUnitOfWork>();
+
+            var categoryController = host.Services.GetRequiredService<CategoryController>();
+            var ingredientController = host.Services.GetRequiredService<IngredientController>();
+            var recipeController = host.Services.GetRequiredService<RecipeController>();
 
             while (true)
             {
@@ -38,24 +46,28 @@ namespace RecipeBook.UI
                 switch (key.Key)
                 {
                     case ConsoleKey.A:
-                        var recipe = EnterRecipe(recipeController, categoryController, ingredientController);
-                        recipeController.AddRecipe(recipe);
+                        var recipe = await EnterRecipeAsync(recipeController, categoryController, ingredientController);
+                        await recipeController.AddRecipeAsync(recipe);
 
                         break;
                     case ConsoleKey.F:
-                        foreach (var item in ingredientController.GetIngredients())
+                        logger.LogInformation("Getting ingredients...");
+
+                        foreach (var item in await ingredientController.GetItemsAsync<Ingredient>())
                         {
                             Console.WriteLine(item.Name);
                         }
 
                         break;
                     case ConsoleKey.E:
-                        var categories = categoryController.GetCategories(null);
-                        var recipies = recipeController.GetRecipesInCategory(null);
+                        logger.LogInformation("Getting records...");
+
+                        var categories = await categoryController.GetCategoriesAsync(null);
+                        var recipies = await recipeController.GetRecipesInCategoryAsync(null);
 
                         while (true)
                         {
-                            if (categories.Count == 0 && recipies.Count == 0)
+                            if (!categories.Any() && !recipies.Any())
                             {
                                 Console.WriteLine("No elements here");
                                 break;
@@ -68,21 +80,20 @@ namespace RecipeBook.UI
                             name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower());
 
                             var rec = recipies.SingleOrDefault(r => r.Name == name);
+                            var category = categories.SingleOrDefault(c => c.Name == name);
 
                             if (rec != null)
                             {
                                 ShowRecipe(rec);
                                 break;
                             }
-                            else
-                                recipies = recipeController.GetRecipesInCategory(name);
-
-                            var category = categories.SingleOrDefault(c => c.Name == name);
-
-                            if (category == null)
+                            else if (category == null)
                                 Console.WriteLine("Invalid input\n");
                             else
-                                categories = categoryController.GetCategories(category.Id);
+                            {
+                                recipies = await recipeController.GetRecipesInCategoryAsync(name);
+                                categories = await categoryController.GetCategoriesAsync(category.Id);
+                            }
                         }
                         break;
                     case ConsoleKey.Q:
@@ -95,7 +106,7 @@ namespace RecipeBook.UI
             }
         }
 
-        static Recipe EnterRecipe(RecipeController recipeController, CategoryController categoryController, IngredientController ingredientController)
+        static async Task<Recipe> EnterRecipeAsync(RecipeController recipeController, CategoryController categoryController, IngredientController ingredientController)
         {
             var name = Request("Enter name of recipe: ");
             var categoryName = Request("Enter category (starting with subcats): ");
@@ -109,13 +120,13 @@ namespace RecipeBook.UI
                 if (key == "y")
                 {
                     var parentName = Request("Enter parent category: ");
-                    category = categoryController.CreateCategory(categoryName, parentName);
+                    category = await categoryController.CreateCategoryAsync(categoryName, parentName);
 
                     break;
                 }
                 if (key == "n")
                 {
-                    category = categoryController.CreateCategory(categoryName);
+                    category = await categoryController.CreateCategoryAsync(categoryName);
                     break;
                 }
                 else
@@ -131,7 +142,7 @@ namespace RecipeBook.UI
             {
                 var recipeIngredient = new RecipeIngredient
                 {
-                    Ingredient = ingredientController.CreateIngredient(item)
+                    Ingredient = await ingredientController.CreateIngredientAsync(item)
                 };
 
                 recipeIngredients.Add(recipeIngredient);
@@ -146,7 +157,7 @@ namespace RecipeBook.UI
             var instruction = Request("Enter instruction: ");
             var duration = ParseDouble("duration in minutes");
 
-            return recipeController.CreateRecipe(name, category, description, recipeIngredients, instruction, duration);
+            return await recipeController.CreateRecipeAsync(name, category, description, recipeIngredients, instruction, duration);
         }
 
         static double ParseDouble(string name)
@@ -204,5 +215,21 @@ namespace RecipeBook.UI
             Console.WriteLine("Instruction: " + recipe.Instruction);
             Console.WriteLine("Duration in minutes: " + recipe.DurationInMinutes);
         }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+         Host.CreateDefaultBuilder(args)
+            .ConfigureServices((context, services) =>
+            {
+                services.AddInfrastructure(context.Configuration.GetConnectionString("DefaultConnection"));
+
+                services.AddTransient<IngredientController>();
+                services.AddTransient<CategoryController>();
+                services.AddTransient<RecipeController>();
+            })
+            .ConfigureLogging(config =>
+            {
+                config.ClearProviders();
+                config.AddConsole();
+            });
     }
 }

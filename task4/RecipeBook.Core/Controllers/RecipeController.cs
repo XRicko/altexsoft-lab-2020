@@ -1,8 +1,9 @@
 ﻿using RecipeBook.Core.Entities;
-using RecipeBook.Core.Repository.Interfaces;
+using RecipeBook.SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RecipeBook.Core.Controllers
 {
@@ -10,15 +11,16 @@ namespace RecipeBook.Core.Controllers
     {
         public RecipeController(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
-        public List<Recipe> GetRecipesInCategory(string name)
+        public async Task<List<Recipe>> GetRecipesInCategoryAsync(string name)
         {
-            return unitOfWork.Recipes.Find(r => r.Category.Name == name).ToList();
+            var recipes = await unitOfWork.Repository.FindAsync<Recipe>(r => r.Category.Name == name);
+            return recipes.ToList();
         }
 
-        public Recipe CreateRecipe(string name, Category category, string desription, List<RecipeIngredient> recipeIngredients, string instruction, double durationInMinutes)
+        public async Task<Recipe> CreateRecipeAsync(string name, Category category, string desription, List<RecipeIngredient> recipeIngredients, string instruction, double durationInMinutes)
         {
             name = StandardizeName(name);
-            var recipe = unitOfWork.Recipes.Get(name);
+            var recipe = await unitOfWork.Repository.GetAsync<Recipe>(name);
 
             if (recipe == null)
                 return new Recipe(name, category, desription, recipeIngredients, instruction, durationInMinutes);
@@ -26,38 +28,26 @@ namespace RecipeBook.Core.Controllers
             return recipe;
         }
 
-        public void AddRecipe(Recipe recipe)
+        public async Task AddRecipeAsync(Recipe recipe)
         {
-            CheckRecipeForExistence(recipe);
+            await CheckRecipeForExistenceAsync(recipe);
 
-            unitOfWork.Recipes.Add(recipe);
-            unitOfWork.Categories.Add(recipe.Category);
+            await AddAsync(recipe);
+            await AddAsync(recipe.Category);
 
             foreach (var recipeIngredient in recipe.RecipeIngredient)
             {
-                unitOfWork.Ingredients.Add(recipeIngredient.Ingredient);
+                await AddAsync(recipeIngredient.Ingredient);
             }
 
-            unitOfWork.Save();
+            unitOfWork.SaveAsync();
         }
 
-        public void RemoveRecipe(Recipe recipe)
+        private async Task CheckRecipeForExistenceAsync(Recipe recipe)
         {
-            unitOfWork.Recipes.Remove(recipe);
-            unitOfWork.Save();
-        }
+            var r = await unitOfWork.Repository.GetAsync(recipe);
 
-        public void RemoveRecipe(string name)
-        {
-            StandardizeName(name);
-            unitOfWork.Recipes.Remove(name);
-
-            unitOfWork.Save();
-        }
-
-        private void CheckRecipeForExistence(Recipe recipe)
-        {
-            if (unitOfWork.Recipes.Get(recipe) != null)
+            if (r != null)
                 throw new ArgumentException("This recipe already exists", nameof(recipe));
         }
     }

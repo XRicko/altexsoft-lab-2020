@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeBook.CMD", "RecipeBoo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeBook.Infrastructure", "RecipeBook.Infrastructure\RecipeBook.Infrastructure.csproj", "{70E61291-A968-4D57-812C-832F344E70BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeBook.SharedKernel", "RecipeBook.SharedKernel\RecipeBook.SharedKernel.csproj", "{D04B17D1-7B41-437B-B7E3-0EAFE7635A60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeBook.SharedKernel", "RecipeBook.SharedKernel\RecipeBook.SharedKernel.csproj", "{D04B17D1-7B41-437B-B7E3-0EAFE7635A60}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

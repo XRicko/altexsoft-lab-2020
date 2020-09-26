@@ -1,7 +1,8 @@
 ﻿using RecipeBook.Core.Entities;
-using RecipeBook.Core.Repository.Interfaces;
+using RecipeBook.SharedKernel.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RecipeBook.Core.Controllers
 {
@@ -9,10 +10,10 @@ namespace RecipeBook.Core.Controllers
     {
         public CategoryController(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
-        public Category CreateCategory(string name, string parentName = null)
+        public async Task<Category> CreateCategoryAsync(string name, string parentName = null)
         {
             name = StandardizeName(name);
-            var category = unitOfWork.Categories.Get(name);
+            var category = await unitOfWork.Repository.GetAsync<Category>(name);
 
             if (category != null)
                 return category;
@@ -21,12 +22,12 @@ namespace RecipeBook.Core.Controllers
                 parentName = StandardizeName(parentName);
                 name = name + " " + parentName;
 
-                var parent = unitOfWork.Categories.Get(parentName);
+                var parent = await unitOfWork.Repository.GetAsync<Category>(parentName);
 
                 if (parent == null)
                 {
                     parent = new Category(parentName);
-                    AddCategory(parent);
+                    await AddAsync(parent);
                 }
 
                 return new Category(name, parent.Id);
@@ -35,29 +36,10 @@ namespace RecipeBook.Core.Controllers
             return new Category(name);
         }
 
-        public void AddCategory(Category category)
+        public async Task<List<Category>> GetCategoriesAsync(int? id)
         {
-            if (unitOfWork.Categories.Get(category) == null)
-                unitOfWork.Categories.Add(category);
-        }
-
-        public void RemoveCategory(Category category)
-        {
-            unitOfWork.Categories.Remove(category);
-            unitOfWork.Save();
-        }
-
-        public void RemoveCategory(string name)
-        {
-            StandardizeName(name);
-            unitOfWork.Categories.Remove(name);
-
-            unitOfWork.Save();
-        }
-
-        public List<Category> GetCategories(int? id)
-        {
-            return unitOfWork.Categories.Find(c => c.ParentId == id).ToList();
+            var categories = await unitOfWork.Repository.FindAsync<Category>(c => c.ParentId == id);
+            return categories.ToList();
         }
     }
 }
