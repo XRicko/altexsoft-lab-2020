@@ -5,7 +5,7 @@ namespace RecipeBook.Core.Entities
 {
     public class Ingredient : BaseEntity
     {
-        public virtual ICollection<RecipeIngredient> RecipeIngredient { get; }
+        public virtual ICollection<RecipeIngredient> RecipeIngredients { get; }
 
         public Ingredient(string name) : base(name) { }
     }

@@ -15,8 +15,8 @@ namespace RecipeBook.Infrastructure.Data.Config
                 .IsRequired()
                 .HasMaxLength(75);
 
-            builder.HasOne(d => d.Parent)
-                .WithMany(p => p.InverseParent)
+            builder.HasOne(d => d.Children)
+                .WithMany(p => p.InverseParents)
                 .HasForeignKey(d => d.ParentId);
         }
     }

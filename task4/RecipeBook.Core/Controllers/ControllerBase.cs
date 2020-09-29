@@ -22,9 +22,9 @@ namespace RecipeBook.Core.Controllers
 
         public async Task AddAsync<T>(T entity) where T : BaseEntity
         {
-            var ing = await UnitOfWork.Repository.GetAsync(entity);
+            var item = await UnitOfWork.Repository.GetAsync(entity);
 
-            if (ing == null)
+            if (item == null)
                 await UnitOfWork.Repository.AddAsync(entity);
         }
 

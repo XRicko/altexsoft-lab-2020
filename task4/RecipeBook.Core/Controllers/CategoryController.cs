@@ -35,9 +35,9 @@ namespace RecipeBook.Core.Controllers
             return new Category(standardizedName);
         }
 
-        public Task<IEnumerable<Category>> GetCategoriesAsync(int? id)
+        public Task<IEnumerable<Category>> GetTopCategoriesAsync()
         {
-            return UnitOfWork.Repository.FindAsync<Category>(c => c.ParentId == id);
+            return UnitOfWork.Repository.FindAsync<Category>(c => c.ParentId == null);
         }
     }
 }

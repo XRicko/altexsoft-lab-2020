@@ -12,7 +12,7 @@ namespace RecipeBook.Core.Entities
         public double? DurationInMinutes { get; private set; }
 
         public virtual Category Category { get; private set; }
-        public virtual ICollection<RecipeIngredient> RecipeIngredient { get; private set; }
+        public virtual ICollection<RecipeIngredient> RecipeIngredients { get; private set; }
 
         public Recipe(string name) : base(name) { }
 
@@ -27,7 +27,7 @@ namespace RecipeBook.Core.Entities
 
             Category = category ?? throw new ArgumentNullException("Category cannot be null", nameof(category));
             Description = description;
-            RecipeIngredient = recipeIngredients ?? throw new ArgumentNullException("Ingredients cannot be null", nameof(recipeIngredients));
+            RecipeIngredients = recipeIngredients ?? throw new ArgumentNullException("Ingredients cannot be null", nameof(recipeIngredients));
             Instruction = instruction;
             DurationInMinutes = durationInMinutes;
         }

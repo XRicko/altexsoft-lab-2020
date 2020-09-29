@@ -10,9 +10,9 @@ namespace RecipeBook.Core.Controllers
     {
         public RecipeController(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
-        public Task<IEnumerable<Recipe>> GetRecipesInCategoryAsync(string name)
+        public Task<IEnumerable<Recipe>> GetRecipesWithoutCategoryAsync()
         {
-            return UnitOfWork.Repository.FindAsync<Recipe>(r => r.Category.Name == StandardizeName(name));
+            return UnitOfWork.Repository.FindAsync<Recipe>(r => r.Category == null);
         }
 
         public async Task<Recipe> CreateRecipeAsync(string name, Category category, string desription, List<RecipeIngredient> recipeIngredients, string instruction, double durationInMinutes)
@@ -32,11 +32,6 @@ namespace RecipeBook.Core.Controllers
 
             await AddAsync(recipe);
             await AddAsync(recipe.Category);
-
-            foreach (var recipeIngredient in recipe.RecipeIngredient)
-            {
-                await AddAsync(recipeIngredient.Ingredient);
-            }
 
             await UnitOfWork.SaveAsync();
         }

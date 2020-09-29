@@ -13,13 +13,14 @@ namespace RecipeBook.Infrastructure.Data.Config
                     .HasMaxLength(50);
 
             builder.HasOne(d => d.Ingredient)
-                .WithMany(p => p.RecipeIngredient)
+                .WithMany(p => p.RecipeIngredients)
                 .HasForeignKey(d => d.IngredientId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
             builder.HasOne(d => d.Recipe)
-                .WithMany(p => p.RecipeIngredient)
+                .WithMany(p => p.RecipeIngredients)
                 .HasForeignKey(d => d.RecipeId)
-                .OnDelete(DeleteBehavior.ClientSetNull);        }
+                .OnDelete(DeleteBehavior.ClientSetNull);
+        }
     }
 }

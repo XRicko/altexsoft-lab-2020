@@ -6,7 +6,6 @@ using RecipeBook.Core.Controllers;
 using RecipeBook.Core.Entities;
 using RecipeBook.Infrastructure.Extensions;
 using RecipeBook.SharedKernel;
-using RecipeBook.SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -23,8 +22,7 @@ namespace RecipeBook.UI
             var host = CreateHostBuilder(args).Build();
             var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
-            logger.LogInformation("Getting repository...");
-            var unitOfWork = host.Services.GetRequiredService<IUnitOfWork>();
+            logger.LogInformation("Getting things ready...");
 
             var categoryController = host.Services.GetRequiredService<CategoryController>();
             var ingredientController = host.Services.GetRequiredService<IngredientController>();
@@ -62,8 +60,8 @@ namespace RecipeBook.UI
                     case ConsoleKey.E:
                         logger.LogInformation("Getting records...");
 
-                        var categories = await categoryController.GetCategoriesAsync(null);
-                        var recipies = await recipeController.GetRecipesInCategoryAsync(null);
+                        var categories = await categoryController.GetTopCategoriesAsync();
+                        var recipies = await recipeController.GetRecipesWithoutCategoryAsync();
 
                         while (true)
                         {
@@ -92,8 +90,8 @@ namespace RecipeBook.UI
                                 Console.WriteLine("Invalid input\n");
                             else
                             {
-                                recipies = await recipeController.GetRecipesInCategoryAsync(name);
-                                categories = await categoryController.GetCategoriesAsync(category.Id);
+                                recipies = category.Recipes;
+                                categories = category.InverseParents;
                             }
                         }
                         break;
@@ -208,7 +206,7 @@ namespace RecipeBook.UI
             Console.WriteLine("Description: " + recipe.Description);
 
             Console.WriteLine("Ingredients: ");
-            foreach (var item in recipe.RecipeIngredient)
+            foreach (var item in recipe.RecipeIngredients)
             {
                 Console.WriteLine("\t" + item.Ingredient.Name + " - " + item.Amount);
             }

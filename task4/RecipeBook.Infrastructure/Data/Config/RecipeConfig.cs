@@ -15,15 +15,12 @@ namespace RecipeBook.Infrastructure.Data.Config
                 .IsRequired()
                 .HasMaxLength(255);
 
-            builder.Property(e => e.Instruction)
-                .HasColumnType("text");
-
             builder.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(75);
 
             builder.HasOne(d => d.Category)
-                .WithMany(p => p.Recipe)
+                .WithMany(p => p.Recipes)
                 .HasForeignKey(d => d.CategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
         }
