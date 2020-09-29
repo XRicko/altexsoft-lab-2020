@@ -33,6 +33,11 @@ namespace RecipeBook.Core.Controllers
             await AddAsync(recipe);
             await AddAsync(recipe.Category);
 
+            foreach (var recipeIngredient in recipe.RecipeIngredients)
+            {
+                await AddAsync(recipeIngredient.Ingredient);
+            }
+
             await UnitOfWork.SaveAsync();
         }
 
