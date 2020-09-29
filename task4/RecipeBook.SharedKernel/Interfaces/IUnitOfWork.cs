@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace RecipeBook.SharedKernel.Interfaces
 {
@@ -6,6 +7,6 @@ namespace RecipeBook.SharedKernel.Interfaces
     {
         IRepository Repository { get; }
 
-        void SaveAsync();
+        Task SaveAsync();
     }
 }

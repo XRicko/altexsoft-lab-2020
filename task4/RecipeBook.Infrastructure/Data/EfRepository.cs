@@ -11,7 +11,7 @@ namespace RecipeBook.Infrastructure.Data
 {
     public class EfRepository : IRepository
     {
-        protected readonly RecipeBookContext context;
+        private readonly RecipeBookContext context;
 
         public EfRepository(RecipeBookContext context)
         {

@@ -28,10 +28,10 @@ namespace RecipeBook.Core.Controllers
                 await UnitOfWork.Repository.AddAsync(entity);
         }
 
-        public void Remove<T>(T entity) where T : BaseEntity
+        public async Task RemoveAsync<T>(T entity) where T : BaseEntity
         {
             UnitOfWork.Repository.Remove(entity);
-            UnitOfWork.SaveAsync();
+            await UnitOfWork.SaveAsync();
         }
 
         public async Task RemoveAsync<T>(string name) where T : BaseEntity
@@ -39,7 +39,7 @@ namespace RecipeBook.Core.Controllers
             var entity = await UnitOfWork.Repository.GetAsync<T>(StandardizeName(name));
             UnitOfWork.Repository.Remove(entity);
 
-            UnitOfWork.SaveAsync();
+            await UnitOfWork.SaveAsync();
         }
 
         protected string StandardizeName(string name)

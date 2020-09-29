@@ -2,14 +2,12 @@
 
 namespace RecipeBook.SharedKernel
 {
-    public class BaseEntity
+    public abstract class BaseEntity
     {
         public int Id { get; private set; }
         public string Name { get; private set; }
 
-        public BaseEntity() { }
-
-        public BaseEntity(string name)
+        protected BaseEntity(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException($"Name cannot be null", nameof(name));

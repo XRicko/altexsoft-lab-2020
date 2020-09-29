@@ -1,6 +1,6 @@
 ﻿namespace RecipeBook.Core.Entities
 {
-    public partial class RecipeIngredient
+    public class RecipeIngredient
     {
         public int Id { get; private set; }
         public int RecipeId { get; private set; }

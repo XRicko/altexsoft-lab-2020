@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace RecipeBook.Core.Entities
 {
-    public partial class Recipe : BaseEntity
+    public class Recipe : BaseEntity
     {
         public string Description { get; private set; }
         public int CategoryId { get; private set; }
@@ -14,10 +14,7 @@ namespace RecipeBook.Core.Entities
         public virtual Category Category { get; private set; }
         public virtual ICollection<RecipeIngredient> RecipeIngredient { get; private set; }
 
-        public Recipe()
-        {
-            RecipeIngredient = new HashSet<RecipeIngredient>();
-        }
+        public Recipe(string name) : base(name) { }
 
         public Recipe(string name, Category category, string description, List<RecipeIngredient> recipeIngredients, string instruction, double durationInMinutes) : base(name)
         {

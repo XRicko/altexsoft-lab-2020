@@ -9,6 +9,7 @@ using RecipeBook.SharedKernel;
 using RecipeBook.SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -75,7 +76,9 @@ namespace RecipeBook.UI
                             ShowItems(categories);
                             ShowItems(recipies);
 
-                            var name = Request("Enter name to go next or to see full recipe: ");
+                            var name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(Request("Enter name to go next or to see full recipe: ")
+                                .ToLower())
+                                .Trim();
 
                             var rec = recipies.SingleOrDefault(r => r.Name == name);
                             var category = categories.SingleOrDefault(c => c.Name == name);

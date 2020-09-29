@@ -38,7 +38,7 @@ namespace RecipeBook.Core.Controllers
                 await AddAsync(recipeIngredient.Ingredient);
             }
 
-            UnitOfWork.SaveAsync();
+            await UnitOfWork.SaveAsync();
         }
 
         private async Task CheckRecipeForExistenceAsync(Recipe recipe)

@@ -1,4 +1,5 @@
 ﻿using RecipeBook.SharedKernel.Interfaces;
+using System.Threading.Tasks;
 
 namespace RecipeBook.Infrastructure.Data
 {
@@ -14,9 +15,9 @@ namespace RecipeBook.Infrastructure.Data
             Repository = repository;
         }
 
-        public async void SaveAsync()
+        public Task SaveAsync()
         {
-            await context.SaveChangesAsync();
+            return context.SaveChangesAsync();
         }
 
         public void Dispose()
