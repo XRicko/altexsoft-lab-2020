@@ -10,7 +10,7 @@ namespace RecipeBook.SharedKernel
         protected BaseEntity(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentNullException($"Name cannot be null", nameof(name));
+                throw new ArgumentNullException(nameof(name), "Name cannot be null");
 
             Name = name;
         }

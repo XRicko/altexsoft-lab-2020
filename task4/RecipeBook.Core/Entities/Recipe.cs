@@ -19,15 +19,15 @@ namespace RecipeBook.Core.Entities
         public Recipe(string name, Category category, string description, List<RecipeIngredient> recipeIngredients, string instruction, double durationInMinutes) : base(name)
         {
             if (string.IsNullOrWhiteSpace(description))
-                throw new ArgumentNullException("Description cannot be null", nameof(description));
+                throw new ArgumentNullException(nameof(description), "Description cannot be null");
             if (durationInMinutes <= 0)
                 throw new ArgumentException("Duration cannot be 0 or less", nameof(durationInMinutes));
             if (string.IsNullOrWhiteSpace(instruction))
-                throw new ArgumentNullException("Instruction cannot be null", nameof(instruction));
+                throw new ArgumentNullException(nameof(instruction), "Instruction cannot be null");
 
-            Category = category ?? throw new ArgumentNullException("Category cannot be null", nameof(category));
+            Category = category ?? throw new ArgumentNullException(nameof(category), "Category cannot be null");
             Description = description;
-            RecipeIngredients = recipeIngredients ?? throw new ArgumentNullException("Ingredients cannot be null", nameof(recipeIngredients));
+            RecipeIngredients = recipeIngredients ?? throw new ArgumentNullException(nameof(recipeIngredients), "Ingredients cannot be null");
             Instruction = instruction;
             DurationInMinutes = durationInMinutes;
         }

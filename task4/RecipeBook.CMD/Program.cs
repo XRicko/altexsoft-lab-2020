@@ -91,7 +91,7 @@ namespace RecipeBook.UI
                             else
                             {
                                 recipies = category.Recipes;
-                                categories = category.InverseParents;
+                                categories = category.Children;
                             }
                         }
                         break;
