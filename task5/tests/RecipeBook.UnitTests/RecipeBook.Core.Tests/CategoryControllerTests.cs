@@ -61,7 +61,7 @@ namespace RecipeBook.Core.Tests
         public async Task CreateCategoryAsync_ShouldAddParent()
         {
             // Arrange
-            var parentCategoryName = "Soups";
+            var parentName = "Soups";
             var categoryName = "Hot";
 
             var repoMock = new Mock<IRepository>();
@@ -75,7 +75,7 @@ namespace RecipeBook.Core.Tests
             var controller = new CategoryController(unitOfWorkMock.Object);
 
             // Act
-            var category = await controller.CreateCategoryAsync(categoryName, parentCategoryName);
+            var category = await controller.CreateCategoryAsync(categoryName, parentName);
 
             // Assert
             repoMock.Verify(x => x.AddAsync(It.IsAny<Category>()), Times.Once);
@@ -85,13 +85,13 @@ namespace RecipeBook.Core.Tests
         public async Task CreateCategoryAsync_ShouldReturnNewSubCategoryToExistingParent()
         {
             // Arrange
-            var parentCategoryName = "Soups";
+            var parentName = "Soups";
             var categoryName = "Hot";
 
-            var parent = new Category(parentCategoryName) { Id = 3 };
+            var parent = new Category(parentName) { Id = 3 };
 
             var repoMock = new Mock<IRepository>();
-            repoMock.Setup(x => x.GetAsync<Category>(parentCategoryName))
+            repoMock.Setup(x => x.GetAsync<Category>(parentName))
                 .ReturnsAsync(parent);
 
             var unitOfWorkMock = new Mock<IUnitOfWork>();
@@ -101,7 +101,7 @@ namespace RecipeBook.Core.Tests
             var controller = new CategoryController(unitOfWorkMock.Object);
 
             // Act
-            var category = await controller.CreateCategoryAsync(categoryName, parentCategoryName);
+            var category = await controller.CreateCategoryAsync(categoryName, parentName);
 
             // Assert
             Assert.Equal(parent.Id, category.ParentId);

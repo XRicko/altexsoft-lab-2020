@@ -123,7 +123,8 @@ namespace RecipeBook.Core.Tests
             var controller = new RecipeController(unitOfWorkMock.Object);
 
             // Assert && Act
-            await Assert.ThrowsAsync<ArgumentException>(() => controller.AddRecipeAsync(recipe));
+            var exception =  await Assert.ThrowsAsync<ArgumentException>(() => controller.AddRecipeAsync(recipe));
+            Assert.Equal(new ArgumentException("This recipe already exists", nameof(recipe)).Message, exception.Message);
         }
     }
 }

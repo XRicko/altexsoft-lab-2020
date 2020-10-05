@@ -45,20 +45,20 @@ namespace RecipeBook.Core.Tests
             repoMock.Setup(x => x.GetAsync(It.IsAny<Ingredient>()))
                 .ReturnsAsync(It.IsAny<Ingredient>());
             repoMock.Setup(x => x.GetAllAsync<Ingredient>())
-                .ReturnsAsync(GetSampleData());
+                .ReturnsAsync(It.IsAny<IEnumerable<Ingredient>>);
 
             var unitOfWorkMock = new Mock<IUnitOfWork>();
             unitOfWorkMock.Setup(x => x.Repository)
                 .Returns(repoMock.Object);
 
             var controller = new IngredientController(unitOfWorkMock.Object);
-            var newIngredient = new Ingredient("Beef");
+            var ingredient = new Ingredient("Beef");
 
             // Act
-            await controller.AddItemAsync(newIngredient);
+            await controller.AddItemAsync(ingredient);
 
             // Assert
-            repoMock.Verify(x => x.AddAsync(newIngredient), Times.Once);
+            repoMock.Verify(x => x.AddAsync(ingredient), Times.Once);
         }
 
         [Fact]
@@ -66,24 +66,24 @@ namespace RecipeBook.Core.Tests
         {
             // Arrange
             var ingredientName = "Milk";
-            var expected = new Ingredient(ingredientName);  // Because BaseEntity is abstract and Ingredient is the simplest entity
+            var existingIngredient = new Ingredient(ingredientName);  // Because BaseEntity is abstract and Ingredient is the simplest entity
 
             var repoMock = new Mock<IRepository>();
             repoMock.Setup(x => x.GetAsync(It.IsAny<Ingredient>()))
-                .ReturnsAsync(expected);
+                .ReturnsAsync(existingIngredient);
 
             var unitOfWorkMock = new Mock<IUnitOfWork>();
             unitOfWorkMock.Setup(x => x.Repository)
                 .Returns(repoMock.Object);
 
             var controller = new IngredientController(unitOfWorkMock.Object);
-            var newIngredient = new Ingredient(ingredientName);
+            var ingredient = new Ingredient(ingredientName);
 
             // Act
-            await controller.AddItemAsync(newIngredient);
+            await controller.AddItemAsync(ingredient);
 
             // Assert
-            repoMock.Verify(x => x.AddAsync(newIngredient), Times.Never);
+            repoMock.Verify(x => x.AddAsync(ingredient), Times.Never);
         }
 
         public IEnumerable<Ingredient> GetSampleData()
