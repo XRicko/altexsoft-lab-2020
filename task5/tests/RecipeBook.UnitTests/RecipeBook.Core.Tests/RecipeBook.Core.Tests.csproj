@@ -21,8 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RecipeBook.Core\RecipeBook.Core.csproj" />
-    <ProjectReference Include="..\RecipeBook.SharedKernel\RecipeBook.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\..\RecipeBook.Core\RecipeBook.Core.csproj" />
+    <ProjectReference Include="..\..\..\RecipeBook.SharedKernel\RecipeBook.SharedKernel.csproj" />
   </ItemGroup>
 
 </Project>
