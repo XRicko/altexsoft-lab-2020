@@ -1,9 +1,9 @@
 ﻿using Moq;
 using RecipeBook.Core.Controllers;
 using RecipeBook.Core.Entities;
+using RecipeBook.Core.Exceptions;
 using RecipeBook.SharedKernel;
 using RecipeBook.SharedKernel.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
@@ -123,8 +123,8 @@ namespace RecipeBook.Core.Tests
             var controller = new RecipeController(unitOfWorkMock.Object);
 
             // Assert && Act
-            var exception =  await Assert.ThrowsAsync<ArgumentException>(() => controller.AddRecipeAsync(recipe));
-            Assert.Equal(new ArgumentException("This recipe already exists", nameof(recipe)).Message, exception.Message);
+            var exception = await Assert.ThrowsAsync<RecipeExistsException>(() => controller.AddRecipeAsync(recipe));
+            Assert.Equal(new RecipeExistsException(recipe.Name).Message, exception.Message);
         }
     }
 }
