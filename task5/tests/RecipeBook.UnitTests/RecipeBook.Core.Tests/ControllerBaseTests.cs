@@ -11,19 +11,26 @@ namespace RecipeBook.Core.Tests
 {
     public class ControllerBaseTests
     {
+        private readonly Mock<IRepository> repoMock;
+        private readonly Mock<IUnitOfWork> unitOfWorkMock;
+        private readonly IngredientController controller;
+
+        public ControllerBaseTests()
+        {
+            repoMock = new Mock<IRepository>();
+            unitOfWorkMock = new Mock<IUnitOfWork>();
+            controller = new IngredientController(unitOfWorkMock.Object);   // Because ControllerBase is abstract and IngredientController is the simplest controller
+
+            unitOfWorkMock.SetupGet(x => x.Repository)
+              .Returns(repoMock.Object);
+        }
+
         [Fact]
         public async Task GetAllItemsAsync_ShouldReturnList()
         {
             // Arrange
-            var repoMock = new Mock<IRepository>();
             repoMock.Setup(x => x.GetAllAsync<Ingredient>())
                 .ReturnsAsync(GetSampleData());
-
-            var unitOfWorkMock = new Mock<IUnitOfWork>();
-            unitOfWorkMock.Setup(x => x.Repository)
-                .Returns(repoMock.Object);
-
-            var controller = new IngredientController(unitOfWorkMock.Object);   // Because ControllerBase is abstract and IngredientController is the simplest controller
 
             var expected = GetSampleData();
 
@@ -34,24 +41,19 @@ namespace RecipeBook.Core.Tests
             Assert.True(actual != null);
             Assert.Equal(expected.Count(), actual.Count());
             Assert.Equal(expected.FirstOrDefault().Name, actual.FirstOrDefault().Name);
+
+            repoMock.Verify(x => x.GetAllAsync<Ingredient>(), Times.Once);
         }
 
         [Fact]
         public async Task AddItemAsync_ShouldExecute()
         {
             // Arrange
-            var repoMock = new Mock<IRepository>();
-
             repoMock.Setup(x => x.GetAsync(It.IsAny<Ingredient>()))
-                .ReturnsAsync(It.IsAny<Ingredient>());
+                .ReturnsAsync(() => null);
             repoMock.Setup(x => x.GetAllAsync<Ingredient>())
-                .ReturnsAsync(It.IsAny<IEnumerable<Ingredient>>);
+                .ReturnsAsync(() => null);
 
-            var unitOfWorkMock = new Mock<IUnitOfWork>();
-            unitOfWorkMock.Setup(x => x.Repository)
-                .Returns(repoMock.Object);
-
-            var controller = new IngredientController(unitOfWorkMock.Object);
             var ingredient = new Ingredient("Beef");
 
             // Act
@@ -68,15 +70,9 @@ namespace RecipeBook.Core.Tests
             var ingredientName = "Milk";
             var existingIngredient = new Ingredient(ingredientName);  // Because BaseEntity is abstract and Ingredient is the simplest entity
 
-            var repoMock = new Mock<IRepository>();
             repoMock.Setup(x => x.GetAsync(It.IsAny<Ingredient>()))
                 .ReturnsAsync(existingIngredient);
-
-            var unitOfWorkMock = new Mock<IUnitOfWork>();
-            unitOfWorkMock.Setup(x => x.Repository)
-                .Returns(repoMock.Object);
-
-            var controller = new IngredientController(unitOfWorkMock.Object);
+        
             var ingredient = new Ingredient(ingredientName);
 
             // Act

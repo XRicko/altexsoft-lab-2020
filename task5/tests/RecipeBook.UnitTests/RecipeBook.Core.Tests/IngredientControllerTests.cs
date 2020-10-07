@@ -9,53 +9,56 @@ namespace RecipeBook.Core.Tests
 {
     public class IngredientControllerTests
     {
+        private readonly Mock<IRepository> repoMock;
+        private readonly Mock<IUnitOfWork> unitOfWorkMock;
+        private readonly IngredientController controller;
+
+        private readonly string ingredientName;
+        private readonly Ingredient ingredient;
+
+        public IngredientControllerTests()
+        {
+            repoMock = new Mock<IRepository>();
+            unitOfWorkMock = new Mock<IUnitOfWork>();
+            controller = new IngredientController(unitOfWorkMock.Object);
+
+            unitOfWorkMock.SetupGet(x => x.Repository)
+                .Returns(repoMock.Object);
+
+            ingredientName = "Cheese";
+            ingredient = new Ingredient(ingredientName);
+        }
+
         [Fact]
         public async Task CreateIngredientAsync_ShouldReturnNewIngredient()
         {
             // Arrange
-            var repoMock = new Mock<IRepository>();
             repoMock.Setup(x => x.GetAsync<Ingredient>(It.IsAny<string>()))
-                .ReturnsAsync(It.IsAny<Ingredient>());
-
-            var unitOfWorkMock = new Mock<IUnitOfWork>();
-            unitOfWorkMock.Setup(x => x.Repository)
-                .Returns(repoMock.Object);
-
-            var controller = new IngredientController(unitOfWorkMock.Object);
-
-            var ingredientName = "Pork";
-            var expected = new Ingredient(ingredientName);
+                .ReturnsAsync(() => null);
 
             // Act
             var actual = await controller.CreateIngredientAsync(ingredientName);
 
             // Arrange
-            Assert.NotSame(expected, actual);
-            Assert.Equal(expected.Name, actual.Name);
+            Assert.NotSame(ingredient, actual);
+            Assert.Equal(ingredient.Name, actual.Name);
+
+            repoMock.Verify(x => x.GetAsync<Ingredient>(It.IsAny<string>()), Times.Once);
         }
 
         [Fact]
         public async Task CreateIngredientAsync_ShouldReturnExistingIngredient()
         {
             // Arrange
-            var ingredientName = "Cheese";
-            var expected = new Ingredient(ingredientName);
-
-            var repoMock = new Mock<IRepository>();
             repoMock.Setup(x => x.GetAsync<Ingredient>(It.IsAny<string>()))
-                .ReturnsAsync(expected);
-
-            var unitOfWorkMock = new Mock<IUnitOfWork>();
-            unitOfWorkMock.Setup(x => x.Repository)
-                .Returns(repoMock.Object);
-
-            var controller = new IngredientController(unitOfWorkMock.Object);
+                .ReturnsAsync(ingredient);
 
             // Act
             var actual = await controller.CreateIngredientAsync(ingredientName);
 
             // Assert
-            Assert.Same(expected, actual);
+            Assert.Same(ingredient, actual);
+            repoMock.Verify(x => x.GetAsync<Ingredient>(It.IsAny<string>()), Times.Once);
         }
     }
 }
