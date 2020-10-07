@@ -1,7 +1,6 @@
 ﻿using RecipeBook.SharedKernel;
 using RecipeBook.SharedKernel.Interfaces;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -34,14 +33,6 @@ namespace RecipeBook.Core.Controllers
 
                 await UnitOfWork.Repository.AddAsync(entity);
             }
-        }
-
-        protected string StandardizeName(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-                return null;
-
-            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower()).Trim();
         }
     }
 }

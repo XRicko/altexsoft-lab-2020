@@ -33,7 +33,7 @@ namespace RecipeBook.Core.Tests
         public async Task CreateIngredientAsync_ShouldReturnNewIngredient()
         {
             // Arrange
-            repoMock.Setup(x => x.GetAsync<Ingredient>(It.IsAny<string>()))
+            repoMock.Setup(x => x.GetAsync<Ingredient>(ingredientName))
                 .ReturnsAsync(() => null);
 
             // Act
@@ -43,14 +43,14 @@ namespace RecipeBook.Core.Tests
             Assert.NotSame(ingredient, actual);
             Assert.Equal(ingredient.Name, actual.Name);
 
-            repoMock.Verify(x => x.GetAsync<Ingredient>(It.IsAny<string>()), Times.Once);
+            repoMock.Verify(x => x.GetAsync<Ingredient>(ingredientName), Times.Once);
         }
 
         [Fact]
         public async Task CreateIngredientAsync_ShouldReturnExistingIngredient()
         {
             // Arrange
-            repoMock.Setup(x => x.GetAsync<Ingredient>(It.IsAny<string>()))
+            repoMock.Setup(x => x.GetAsync<Ingredient>(ingredientName))
                 .ReturnsAsync(ingredient);
 
             // Act
@@ -58,7 +58,7 @@ namespace RecipeBook.Core.Tests
 
             // Assert
             Assert.Same(ingredient, actual);
-            repoMock.Verify(x => x.GetAsync<Ingredient>(It.IsAny<string>()), Times.Once);
+            repoMock.Verify(x => x.GetAsync<Ingredient>(ingredientName), Times.Once);
         }
     }
 }

@@ -49,12 +49,14 @@ namespace RecipeBook.Core.Tests
         public async Task AddItemAsync_ShouldExecute()
         {
             // Arrange
-            repoMock.Setup(x => x.GetAsync(It.IsAny<Ingredient>()))
+            var ingredient = new Ingredient("Beef");
+
+            repoMock.Setup(x => x.GetAsync(ingredient))
                 .ReturnsAsync(() => null);
             repoMock.Setup(x => x.GetAllAsync<Ingredient>())
                 .ReturnsAsync(() => null);
 
-            var ingredient = new Ingredient("Beef");
+            repoMock.Setup(x => x.AddAsync(ingredient));
 
             // Act
             await controller.AddItemAsync(ingredient);
@@ -70,10 +72,10 @@ namespace RecipeBook.Core.Tests
             var ingredientName = "Milk";
             var existingIngredient = new Ingredient(ingredientName);  // Because BaseEntity is abstract and Ingredient is the simplest entity
 
-            repoMock.Setup(x => x.GetAsync(It.IsAny<Ingredient>()))
-                .ReturnsAsync(existingIngredient);
-        
             var ingredient = new Ingredient(ingredientName);
+
+            repoMock.Setup(x => x.GetAsync(ingredient))
+                .ReturnsAsync(existingIngredient);
 
             // Act
             await controller.AddItemAsync(ingredient);

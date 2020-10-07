@@ -1,5 +1,6 @@
 ﻿using RecipeBook.Core.Entities;
 using RecipeBook.Core.Exceptions;
+using RecipeBook.Core.Extensions;
 using RecipeBook.SharedKernel.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace RecipeBook.Core.Controllers
 
         public async Task<Recipe> CreateRecipeAsync(string name, Category category, string desription, List<RecipeIngredient> recipeIngredients, string instruction, double durationInMinutes)
         {
-            var standirdizedName = StandardizeName(name);
+            var standirdizedName = name.StandardizeName();
             var recipe = await UnitOfWork.Repository.GetAsync<Recipe>(standirdizedName);
 
             if (recipe == null)

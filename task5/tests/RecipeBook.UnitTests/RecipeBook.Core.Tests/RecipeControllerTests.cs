@@ -2,6 +2,7 @@
 using RecipeBook.Core.Controllers;
 using RecipeBook.Core.Entities;
 using RecipeBook.Core.Exceptions;
+using RecipeBook.Core.Extensions;
 using RecipeBook.SharedKernel;
 using RecipeBook.SharedKernel.Interfaces;
 using System.Collections.Generic;
@@ -39,14 +40,14 @@ namespace RecipeBook.Core.Tests
             recipeIngredients = new List<RecipeIngredient>();
             duration = 30;
 
-            recipe = new Recipe(recipeName, category, description, recipeIngredients, instruction, duration);
+            recipe = new Recipe(recipeName.StandardizeName(), category, description, recipeIngredients, instruction, duration);
         }
 
         [Fact]
         public async Task CreateRecipeAsync_ShouldReturnNewRecipe()
         {
             // Arrange
-            repoMock.Setup(x => x.GetAsync<Recipe>(It.IsAny<string>()))
+            repoMock.Setup(x => x.GetAsync<Recipe>(recipeName.StandardizeName()))
                 .ReturnsAsync(() => null);
 
             // Act
@@ -56,14 +57,14 @@ namespace RecipeBook.Core.Tests
             Assert.NotSame(recipe, actual);
             Assert.Equal(recipe.Name, actual.Name);
 
-            repoMock.Verify(x => x.GetAsync<Recipe>(It.IsAny<string>()), Times.Once);
+            repoMock.Verify(x => x.GetAsync<Recipe>(recipeName.StandardizeName()), Times.Once);
         }
 
         [Fact]
         public async Task CreateRecipeAsync_ShouldReturnExistingRecipe()
         {
             // Arrange
-            repoMock.Setup(x => x.GetAsync<Recipe>(It.IsAny<string>()))
+            repoMock.Setup(x => x.GetAsync<Recipe>(recipeName.StandardizeName()))
                 .ReturnsAsync(recipe);
 
             // Act
@@ -71,14 +72,14 @@ namespace RecipeBook.Core.Tests
 
             // Assert
             Assert.Same(recipe, actual);
-            repoMock.Verify(x => x.GetAsync<Recipe>(It.IsAny<string>()), Times.Once);
+            repoMock.Verify(x => x.GetAsync<Recipe>(recipeName.StandardizeName()), Times.Once);
         }
 
         [Fact]
         public async Task AddRecipeAsync_ShouldExecute()
         {
             // Arrange
-            repoMock.Setup(x => x.GetAsync(It.IsAny<Recipe>()))
+            repoMock.Setup(x => x.GetAsync(recipe))
                 .ReturnsAsync(() => null);
             repoMock.Setup(x => x.GetAllAsync<Recipe>())
                 .ReturnsAsync(() => null);
@@ -95,7 +96,7 @@ namespace RecipeBook.Core.Tests
         public async Task AddRecipeAsync_ShouldThrowException()
         {
             // Arrange
-            repoMock.Setup(x => x.GetAsync(It.IsAny<Recipe>()))
+            repoMock.Setup(x => x.GetAsync(recipe))
                 .ReturnsAsync(recipe);
 
             // Assert && Act

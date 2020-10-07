@@ -1,4 +1,5 @@
 ﻿using RecipeBook.Core.Entities;
+using RecipeBook.Core.Extensions;
 using RecipeBook.SharedKernel.Interfaces;
 using System.Threading.Tasks;
 
@@ -10,7 +11,7 @@ namespace RecipeBook.Core.Controllers
 
         public async Task<Ingredient> CreateIngredientAsync(string name)
         {
-            var standardizedName = StandardizeName(name);
+            var standardizedName = name.StandardizeName();
             var ingredient = await UnitOfWork.Repository.GetAsync<Ingredient>(standardizedName);
 
             if (ingredient == null)

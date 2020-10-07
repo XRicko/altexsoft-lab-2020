@@ -1,7 +1,7 @@
 ﻿using RecipeBook.Core.Entities;
+using RecipeBook.Core.Extensions;
 using RecipeBook.SharedKernel.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace RecipeBook.Core.Controllers
@@ -12,16 +12,16 @@ namespace RecipeBook.Core.Controllers
 
         public async Task<Category> CreateCategoryAsync(string name, string parentName = null)
         {
-            var standardizedName = StandardizeName(name);
+            var standardizedName = name.StandardizeName();
             var category = await UnitOfWork.Repository.GetAsync<Category>(standardizedName);
 
             if (category != null)
                 return category;
             if (!string.IsNullOrWhiteSpace(parentName))
             {
-                var standardizedParentName = StandardizeName(parentName);
+                var standardizedParentName = parentName.StandardizeName();
                 var subCategoryName = standardizedName + " " + standardizedParentName;
-                var noDublicatesSubName = string.Join(" ", subCategoryName.Split(' ').Distinct());
+                var noDublicatesSubName = subCategoryName.RemoveDublicates();
 
                 var parent = await UnitOfWork.Repository.GetAsync<Category>(standardizedParentName);
 
