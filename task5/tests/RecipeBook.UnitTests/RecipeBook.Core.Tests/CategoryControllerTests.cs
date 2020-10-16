@@ -30,7 +30,6 @@ namespace RecipeBook.Core.Tests
         {
             // Arrange
             var categoryName = "Drinks";
-            var expected = new Category(categoryName);
 
             repoMock.Setup(x => x.GetAsync<Category>(categoryName))
                 .ReturnsAsync(() => null);
@@ -39,8 +38,7 @@ namespace RecipeBook.Core.Tests
             var actual = await controller.CreateCategoryAsync(categoryName);
 
             // Assert
-            Assert.NotSame(expected, actual);
-            Assert.Equal(expected.Name, actual.Name);
+            Assert.Equal(categoryName, actual.Name);
 
             repoMock.Verify(x => x.GetAsync<Category>(categoryName), Times.Once);
             repoMock.Verify(x => x.AddAsync(It.Is<Category>(x => x.Name == categoryName)), Times.Never);
@@ -61,9 +59,7 @@ namespace RecipeBook.Core.Tests
 
             // Assert
             Assert.Same(expected, actual);
-
             repoMock.Verify(x => x.GetAsync<Category>(categoryName), Times.Once);
-            repoMock.Verify(x => x.AddAsync(It.Is<Category>(x => x.Name == categoryName)), Times.Never);
         }
 
         [Fact]
@@ -98,7 +94,6 @@ namespace RecipeBook.Core.Tests
             repoMock.Verify(x => x.GetAsync<Category>(It.Is<string>(s => s == standardizedCategoryName ||
                                                                          s == standardizedParentName)),
                                                                          Times.Exactly(2));
-            repoMock.Verify(x => x.AddAsync(It.Is<Category>(c => c.Name == standardizedParentName)), Times.Once);
         }
 
         [Fact]
@@ -129,7 +124,6 @@ namespace RecipeBook.Core.Tests
 
             repoMock.Verify(x => x.GetAsync<Category>(It.Is<string>(s => s == standardizedCategoryName ||
                                                                          s == standardizedParentName)), Times.Exactly(2));
-            repoMock.Verify(x => x.AddAsync(parent), Times.Never);
         }
     }
 }
