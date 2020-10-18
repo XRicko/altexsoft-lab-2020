@@ -47,7 +47,7 @@ namespace RecipeBook.Core.Controllers
             var r = await UnitOfWork.Repository.GetAsync(recipe);
 
             if (r != null)
-                throw new RecipeExistsException(recipe.Name);
+                throw new RecipeExistsException(recipe);
         }
     }
 }

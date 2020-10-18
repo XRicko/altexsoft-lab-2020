@@ -1,6 +1,7 @@
 using Moq;
 using RecipeBook.Core.Controllers;
 using RecipeBook.Core.Entities;
+using RecipeBook.Core.Extensions;
 using RecipeBook.SharedKernel.Interfaces;
 using System.Threading.Tasks;
 using Xunit;
@@ -40,9 +41,7 @@ namespace RecipeBook.Core.Tests
             var actual = await controller.CreateIngredientAsync(ingredientName);
 
             // Arrange
-            Assert.NotSame(ingredient, actual);
-            Assert.Equal(ingredient.Name, actual.Name);
-
+            Assert.Equal(ingredient.Name.StandardizeName(), actual.Name);
             repoMock.Verify(x => x.GetAsync<Ingredient>(ingredientName), Times.Once);
         }
 
