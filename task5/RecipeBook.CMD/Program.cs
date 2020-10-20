@@ -4,13 +4,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RecipeBook.Core.Controllers;
 using RecipeBook.Core.Entities;
+using RecipeBook.Core.Extensions;
 using RecipeBook.Infrastructure.Extensions;
 using RecipeBook.SharedKernel;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace RecipeBook.UI
@@ -70,12 +69,10 @@ namespace RecipeBook.UI
                             ShowItems(categories);
                             ShowItems(recipies);
 
-                            var name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(Request("Enter name to go next or to see full recipe: ")
-                                .ToLower())
-                                .Trim();
+                            var name = Request("Enter name to go next or to see full recipe: ").StandardizeName();
 
-                            var rec = recipies.SingleOrDefault(r => r.Name == name);
-                            var category = categories.SingleOrDefault(c => c.Name == name);
+                            var rec = await recipeController.GetByNameAsync<Recipe>(name);
+                            var category = await categoryController.GetByNameAsync<Category>(name);
 
                             if (rec != null)
                             {
@@ -133,7 +130,7 @@ namespace RecipeBook.UI
 
             var recipeIngredients = new List<RecipeIngredient>();
 
-            foreach (var item in GetWords(ingredients))
+            foreach (var item in ingredients.GetWords())
             {
                 var recipeIngredient = new RecipeIngredient
                 {
@@ -164,19 +161,6 @@ namespace RecipeBook.UI
                 else
                     Console.Write($"Invalid input for {name}");
             }
-        }
-
-        static List<string> GetWords(string text)
-        {
-            List<string> words = new List<string>();
-
-            string pattern = @"([\w]+(['`]\w+)?([ \w]+)?)";
-            foreach (Match m in Regex.Matches(text, pattern))
-            {
-                words.Add(m.Value);
-            }
-
-            return words;
         }
 
         static void ShowItems<T>(IEnumerable<T> models) where T : BaseEntity

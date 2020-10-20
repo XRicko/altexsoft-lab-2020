@@ -1,0 +1,24 @@
+﻿@page
+@model IngredientsModel
+@{
+    ViewData["Title"] = "Ingredients";
+}
+
+<div class="text-left">
+    <h1>Ingredients</h1>
+</div>
+
+<div class="card-columns">
+    @foreach (var ingredient in Model.Ingredients)
+    {
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">@ingredient.Name</h5>
+            </div>
+
+            <div class="card-body">
+                <a class="btn btn-outline-secondary" asp-page="Recipes" asp-page-handler="WithIngredient" asp-route-ingredientName="@ingredient.Name">Recipes</a>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,27 @@
+﻿@page
+@model CategoriesModel
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<div class="text-left">
+    <h1>Categories</h1>
+</div>
+
+<div class="card-columns">
+    @foreach (var category in Model.Categories)
+    {
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">@category.Name</h5>
+            </div>
+
+            <div class="card-body">
+                @foreach (var subcategory in category.Children)
+                {
+                    <p class="card-text"><a class="text-dark text-decoration-none" asp-page-handler="Subcategories" asp-route-categoryName="@subcategory.Name">@subcategory.Name</a></p>
+                }
+            </div>
+        </div>
+    }
+</div>
