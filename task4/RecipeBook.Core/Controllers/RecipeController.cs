@@ -1,6 +1,6 @@
 ﻿using RecipeBook.Core.Entities;
+using RecipeBook.Core.Exceptions;
 using RecipeBook.SharedKernel.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -46,7 +46,7 @@ namespace RecipeBook.Core.Controllers
             var r = await UnitOfWork.Repository.GetAsync(recipe);
 
             if (r != null)
-                throw new ArgumentException("This recipe already exists", nameof(recipe));
+                throw new RecipeExistsException(recipe.Name);
         }
     }
 }
