@@ -13,8 +13,6 @@
             <label asp-for="@Model.RecipeIngredients[i].Amount">Amount for @Model.RecipeIngredients[i].Ingredient.Name</label>
             <input type="text" class="form-control" asp-for="@Model.RecipeIngredients[i].Amount" placeholder="Enter amount of @Model.RecipeIngredients[i].Ingredient.Name" required />
         </div>
-
-        <input type="hidden" asp-for="@Model.RecipeIngredients[i].Ingredient.Name" value="@Model.RecipeIngredients[i].Ingredient.Name" />
     }
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>

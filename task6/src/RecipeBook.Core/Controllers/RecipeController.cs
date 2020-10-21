@@ -52,6 +52,11 @@ namespace RecipeBook.Core.Controllers
                 await AddItemAsync(recipeIngredient.Ingredient);
             }
 
+            Category category = await UnitOfWork.Repository.GetAsync(recipe.Category);
+
+            if (category != null)
+                recipe.Category = category;
+
             await AddItemAsync(recipe.Category);
             await AddItemAsync(recipe);
         }
