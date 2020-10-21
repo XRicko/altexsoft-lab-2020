@@ -12,16 +12,16 @@ namespace RecipeBook.Core.Controllers
 
         public async Task<Category> CreateCategoryAsync(string name, string parentName = null)
         {
-            var standardizedName = name.StandardizeName();
+            string standardizedName = name.StandardizeName();
             var category = await UnitOfWork.Repository.GetAsync<Category>(standardizedName);
 
             if (category != null)
                 return category;
             if (!string.IsNullOrWhiteSpace(parentName))
             {
-                var standardizedParentName = parentName.StandardizeName();
-                var subCategoryName = standardizedName + " " + standardizedParentName;
-                var noDublicatesSubName = subCategoryName.RemoveDublicates();
+                string standardizedParentName = parentName.StandardizeName();
+                string subcategoryName = standardizedName + " " + standardizedParentName;
+                string noDublicatesSubcategoryName = subcategoryName.RemoveDublicates();
 
                 var parent = await UnitOfWork.Repository.GetAsync<Category>(standardizedParentName);
 
@@ -31,7 +31,7 @@ namespace RecipeBook.Core.Controllers
                     await AddItemAsync(parent);
                 }
 
-                return new Category(noDublicatesSubName, parent.Id);
+                return new Category(noDublicatesSubcategoryName, parent.Id);
             }
 
             return new Category(standardizedName);

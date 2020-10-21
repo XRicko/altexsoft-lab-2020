@@ -1,9 +1,7 @@
 ﻿using Moq;
-using RecipeBook.Core.Controllers;
 using RecipeBook.Core.Entities;
 using RecipeBook.SharedKernel.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -13,13 +11,13 @@ namespace RecipeBook.Core.Tests
     {
         private readonly Mock<IRepository> repoMock;
         private readonly Mock<IUnitOfWork> unitOfWorkMock;
-        private readonly IngredientController controller;
+        private readonly ControllerBaseForTests controller;
 
         public ControllerBaseTests()
         {
             repoMock = new Mock<IRepository>();
             unitOfWorkMock = new Mock<IUnitOfWork>();
-            controller = new IngredientController(unitOfWorkMock.Object);   // Because ControllerBase is abstract and IngredientController is the simplest controller
+            controller = new ControllerBaseForTests(unitOfWorkMock.Object);
 
             unitOfWorkMock.SetupGet(x => x.Repository)
               .Returns(repoMock.Object);
@@ -29,19 +27,16 @@ namespace RecipeBook.Core.Tests
         public async Task GetAllItemsAsync_ShouldReturnList()
         {
             // Arrange
-            repoMock.Setup(x => x.GetAllAsync<Ingredient>())
-                .ReturnsAsync(GetSampleData());
+            IEnumerable<Ingredient> expected = GetSampleData();
 
-            var expected = GetSampleData();
+            repoMock.Setup(x => x.GetAllAsync<Ingredient>())
+                            .ReturnsAsync(expected);
 
             // Act
             var actual = await controller.GetItemsAsync<Ingredient>();
 
             // Assert
-            Assert.True(actual != null);
-            Assert.Equal(expected.Count(), actual.Count());
-            Assert.Equal(expected.FirstOrDefault().Name, actual.FirstOrDefault().Name);
-
+            Assert.Same(expected, actual);
             repoMock.Verify(x => x.GetAllAsync<Ingredient>(), Times.Once);
         }
 
@@ -63,6 +58,8 @@ namespace RecipeBook.Core.Tests
 
             // Assert
             repoMock.Verify(x => x.AddAsync(ingredient), Times.Once);
+            repoMock.Verify(x => x.GetAsync(ingredient), Times.Once);
+            repoMock.Verify(x => x.GetAllAsync<Ingredient>(), Times.Once);
         }
 
         [Fact]
@@ -82,6 +79,7 @@ namespace RecipeBook.Core.Tests
 
             // Assert
             repoMock.Verify(x => x.AddAsync(ingredient), Times.Never);
+            repoMock.Verify(x => x.GetAllAsync<Ingredient>(), Times.Never);
         }
 
         public IEnumerable<Ingredient> GetSampleData()

@@ -12,7 +12,7 @@ namespace RecipeBook.Core.Entities
         public string Instruction { get; private set; }
         public double? DurationInMinutes { get; private set; }
 
-        public virtual Category Category { get; private set; }
+        public virtual Category Category { get; set; }
         public virtual ICollection<RecipeIngredient> RecipeIngredients { get; private set; }
 
         public Recipe(string name) : base(name) { }

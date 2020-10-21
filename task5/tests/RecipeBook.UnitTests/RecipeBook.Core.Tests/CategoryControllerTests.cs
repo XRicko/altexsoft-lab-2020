@@ -30,7 +30,6 @@ namespace RecipeBook.Core.Tests
         {
             // Arrange
             var categoryName = "Drinks";
-            var expected = new Category(categoryName);
 
             repoMock.Setup(x => x.GetAsync<Category>(categoryName))
                 .ReturnsAsync(() => null);
@@ -39,8 +38,7 @@ namespace RecipeBook.Core.Tests
             var actual = await controller.CreateCategoryAsync(categoryName);
 
             // Assert
-            Assert.NotSame(expected, actual);
-            Assert.Equal(expected.Name, actual.Name);
+            Assert.Equal(categoryName, actual.Name);
 
             repoMock.Verify(x => x.GetAsync<Category>(categoryName), Times.Once);
             repoMock.Verify(x => x.AddAsync(It.Is<Category>(x => x.Name == categoryName)), Times.Never);
@@ -61,9 +59,7 @@ namespace RecipeBook.Core.Tests
 
             // Assert
             Assert.Same(expected, actual);
-
             repoMock.Verify(x => x.GetAsync<Category>(categoryName), Times.Once);
-            repoMock.Verify(x => x.AddAsync(It.Is<Category>(x => x.Name == categoryName)), Times.Never);
         }
 
         [Fact]
@@ -73,8 +69,8 @@ namespace RecipeBook.Core.Tests
             var parentName = "Soups";
             var categoryName = "Hot";
 
-            var standardizedCategoryName = categoryName.StandardizeName();
-            var standardizedParentName = parentName.StandardizeName();
+            string standardizedCategoryName = categoryName.StandardizeName();
+            string standardizedParentName = parentName.StandardizeName();
 
             repoMock.Setup(x => x.GetAsync<Category>(standardizedCategoryName))
                 .ReturnsAsync(() => null);
@@ -86,10 +82,10 @@ namespace RecipeBook.Core.Tests
 
             repoMock.Setup(x => x.AddAsync(It.Is<Category>(c => c.Name == standardizedParentName)));
 
-            var expectedName = (standardizedCategoryName + " " + standardizedParentName).RemoveDublicates();
+            string expectedName = (standardizedCategoryName + " " + standardizedParentName).RemoveDublicates();
 
             // Act
-            var category = await controller.CreateCategoryAsync(categoryName, parentName);
+            Category category = await controller.CreateCategoryAsync(categoryName, parentName);
 
             // Assert
             Assert.Equal(4, category.ParentId);
@@ -98,7 +94,6 @@ namespace RecipeBook.Core.Tests
             repoMock.Verify(x => x.GetAsync<Category>(It.Is<string>(s => s == standardizedCategoryName ||
                                                                          s == standardizedParentName)),
                                                                          Times.Exactly(2));
-            repoMock.Verify(x => x.AddAsync(It.Is<Category>(c => c.Name == standardizedParentName)), Times.Once);
         }
 
         [Fact]
@@ -108,8 +103,8 @@ namespace RecipeBook.Core.Tests
             var parentName = "Soups";
             var categoryName = "Hot";
 
-            var standardizedCategoryName = categoryName.StandardizeName();
-            var standardizedParentName = parentName.StandardizeName();
+            string standardizedCategoryName = categoryName.StandardizeName();
+            string standardizedParentName = parentName.StandardizeName();
 
             var parent = new Category(standardizedParentName) { Id = 3 };
 
@@ -118,10 +113,10 @@ namespace RecipeBook.Core.Tests
             repoMock.Setup(x => x.GetAsync<Category>(standardizedParentName))
                 .ReturnsAsync(parent);
 
-            var expectedName = (standardizedCategoryName + " " + standardizedParentName).RemoveDublicates();
+            string expectedName = (standardizedCategoryName + " " + standardizedParentName).RemoveDublicates();
 
             // Act
-            var category = await controller.CreateCategoryAsync(categoryName, parentName);
+            Category category = await controller.CreateCategoryAsync(categoryName, parentName);
 
             // Assert
             Assert.Equal(parent.Id, category.ParentId);
@@ -129,7 +124,6 @@ namespace RecipeBook.Core.Tests
 
             repoMock.Verify(x => x.GetAsync<Category>(It.Is<string>(s => s == standardizedCategoryName ||
                                                                          s == standardizedParentName)), Times.Exactly(2));
-            repoMock.Verify(x => x.AddAsync(parent), Times.Never);
         }
     }
 }

@@ -15,16 +15,14 @@ namespace RecipeBook.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.8")
+                .HasAnnotation("ProductVersion", "3.1.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("RecipeBook.Core.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -37,8 +35,7 @@ namespace RecipeBook.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasName("UQ__Category__8517B2E01CAD4794");
+                        .IsUnique();
 
                     b.HasIndex("ParentId");
 
@@ -48,9 +45,7 @@ namespace RecipeBook.Infrastructure.Migrations
             modelBuilder.Entity("RecipeBook.Core.Entities.Ingredient", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -60,8 +55,7 @@ namespace RecipeBook.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasName("UQ__Ingredie__A1B2F1CC445D2F03");
+                        .IsUnique();
 
                     b.ToTable("Ingredient");
                 });
@@ -69,9 +63,7 @@ namespace RecipeBook.Infrastructure.Migrations
             modelBuilder.Entity("RecipeBook.Core.Entities.Recipe", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
@@ -85,7 +77,7 @@ namespace RecipeBook.Infrastructure.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("Instruction")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -97,8 +89,7 @@ namespace RecipeBook.Infrastructure.Migrations
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("Name")
-                        .IsUnique()
-                        .HasName("UQ__Recipe__9EFE16E92347DBFB");
+                        .IsUnique();
 
                     b.ToTable("Recipe");
                 });
@@ -133,32 +124,28 @@ namespace RecipeBook.Infrastructure.Migrations
             modelBuilder.Entity("RecipeBook.Core.Entities.Category", b =>
                 {
                     b.HasOne("RecipeBook.Core.Entities.Category", "Parent")
-                        .WithMany("InverseParent")
-                        .HasForeignKey("ParentId")
-                        .HasConstraintName("FK__Category__Parent__28B808A7");
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId");
                 });
 
             modelBuilder.Entity("RecipeBook.Core.Entities.Recipe", b =>
                 {
                     b.HasOne("RecipeBook.Core.Entities.Category", "Category")
-                        .WithMany("Recipe")
+                        .WithMany("Recipes")
                         .HasForeignKey("CategoryId")
-                        .HasConstraintName("FK__Recipe__Category__2C88998B")
                         .IsRequired();
                 });
 
             modelBuilder.Entity("RecipeBook.Core.Entities.RecipeIngredient", b =>
                 {
                     b.HasOne("RecipeBook.Core.Entities.Ingredient", "Ingredient")
-                        .WithMany("RecipeIngredient")
+                        .WithMany("RecipeIngredients")
                         .HasForeignKey("IngredientId")
-                        .HasConstraintName("FK__RecipeIng__Ingre__30592A6F")
                         .IsRequired();
 
                     b.HasOne("RecipeBook.Core.Entities.Recipe", "Recipe")
-                        .WithMany("RecipeIngredient")
+                        .WithMany("RecipeIngredients")
                         .HasForeignKey("RecipeId")
-                        .HasConstraintName("FK__RecipeIng__Recip__2F650636")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

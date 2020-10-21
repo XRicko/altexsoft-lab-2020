@@ -1,0 +1,46 @@
+﻿@page
+@model RecipeBook.Web.Pages.Forms.AddRecipeModel
+@{
+    ViewData["Title"] = "AddRecipe";
+}
+
+<h1>Add recipe</h1>
+
+<form method="post" class="general-recipe-info">
+    <div class="form-group">
+        <label asp-for="Name">Recipe name</label>
+        <input type="text" asp-for="Name" class="form-control " id="recipeName" placeholder="Enter recipe name" required />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CategoryName">Category</label>
+        <input type="text" asp-for="CategoryName" class="form-control" placeholder="Enter category" required />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ParentCategoryName">Parent category name</label>
+        <input type="text" asp-for="ParentCategoryName" class="form-control" placeholder="Enter parent category" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description">Brief description</label>
+        <input type="text" asp-for="Description" class="form-control" placeholder="Enter a brief description" required />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Ingredients">Ingredients (comma-separated e.g. water, pork etc.)</label>
+        <textarea asp-for="Ingredients" class="form-control ingredients" rows="2" placeholder="Enter ingredients" required></textarea>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Instruction">Instruction</label>
+        <textarea asp-for="Instruction" class="form-control" rows="4" placeholder="Enter instruction" required></textarea>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Duration">Duration in minutes</label>
+        <input type="number" min="1" value="1" asp-for="Duration" class="form-control" placeholder="Enter duration" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Next</button>
+</form>

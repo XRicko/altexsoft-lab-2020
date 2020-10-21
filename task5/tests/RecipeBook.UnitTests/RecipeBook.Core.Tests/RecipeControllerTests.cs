@@ -51,12 +51,10 @@ namespace RecipeBook.Core.Tests
                 .ReturnsAsync(() => null);
 
             // Act
-            var actual = await controller.CreateRecipeAsync(recipeName, category, description, recipeIngredients, instruction, duration);
+            Recipe actual = await controller.CreateRecipeAsync(recipeName, category, description, recipeIngredients, instruction, duration);
 
             // Assert
-            Assert.NotSame(recipe, actual);
-            Assert.Equal(recipe.Name, actual.Name);
-
+            Assert.Equal(recipeName.StandardizeName(), actual.Name);
             repoMock.Verify(x => x.GetAsync<Recipe>(recipeName.StandardizeName()), Times.Once);
         }
 
@@ -68,7 +66,7 @@ namespace RecipeBook.Core.Tests
                 .ReturnsAsync(recipe);
 
             // Act
-            var actual = await controller.CreateRecipeAsync(recipeName, category, description, recipeIngredients, instruction, duration);
+            Recipe actual = await controller.CreateRecipeAsync(recipeName, category, description, recipeIngredients, instruction, duration);
 
             // Assert
             Assert.Same(recipe, actual);
@@ -88,8 +86,9 @@ namespace RecipeBook.Core.Tests
             await controller.AddRecipeAsync(recipe);
 
             // Assert
+            repoMock.Verify();
             repoMock.Verify(x => x.AddAsync(It.IsAny<BaseEntity>()), Times.Exactly(recipeIngredients.Count + 2));
-            unitOfWorkMock.Verify(x => x.SaveAsync(), Times.Once);
+            unitOfWorkMock.Verify(x => x.SaveAsync(), Times.Exactly(recipeIngredients.Count + 2));
         }
 
         [Fact]
@@ -101,11 +100,7 @@ namespace RecipeBook.Core.Tests
 
             // Assert && Act
             var exception = await Assert.ThrowsAsync<RecipeExistsException>(() => controller.AddRecipeAsync(recipe));
-            Assert.Equal(new RecipeExistsException(recipe.Name).Message, exception.Message);
-
-            repoMock.Verify(x => x.AddAsync(It.IsAny<BaseEntity>()), Times.Never);
-            unitOfWorkMock.Verify(x => x.SaveAsync(), Times.Never);
-
+            Assert.Equal($"{recipe.Name} already exists", exception.Message);
         }
     }
 }
