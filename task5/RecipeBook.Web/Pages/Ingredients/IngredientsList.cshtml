@@ -1,5 +1,5 @@
 ﻿@page
-@model IngredientsModel
+@model IngredientsListModel
 @{
     ViewData["Title"] = "Ingredients";
 }
@@ -17,7 +17,7 @@
             </div>
 
             <div class="card-body">
-                <a class="btn btn-outline-secondary" asp-page="Recipes" asp-page-handler="WithIngredient" asp-route-ingredientName="@ingredient.Name">Recipes</a>
+                <a class="btn btn-outline-secondary" asp-page="/Recipes/RecipesList" asp-page-handler="WithIngredient" asp-route-ingredientName="@ingredient.Name">Recipes</a>
             </div>
         </div>
     }

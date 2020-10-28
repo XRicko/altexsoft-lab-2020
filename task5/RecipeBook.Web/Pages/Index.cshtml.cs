@@ -15,9 +15,6 @@ namespace RecipeBook.Web.Pages
 
         public IEnumerable<Recipe> Recipes { get; private set; }
 
-        [BindProperty(SupportsGet = true)]
-        public string Name { get; set; }
-
         public IndexModel(ILogger<IndexModel> logger, RecipeController recipeController)
         {
             this.logger = logger;

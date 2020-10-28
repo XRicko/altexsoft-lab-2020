@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace RecipeBook.Web.Pages
 {
-    public class CategoriesModel : PageModel
+    public class CategoriesListModel : PageModel
     {
-        private readonly ILogger<CategoriesModel> logger;
+        private readonly ILogger<CategoriesListModel> logger;
         private readonly CategoryController categoryController;
 
         public IEnumerable<Category> Categories { get; private set; }
 
-        public CategoriesModel(ILogger<CategoriesModel> logger, CategoryController categoryController)
+        public CategoriesListModel(ILogger<CategoriesListModel> logger, CategoryController categoryController)
         {
             this.logger = logger;
             this.categoryController = categoryController;
@@ -27,15 +27,25 @@ namespace RecipeBook.Web.Pages
             Categories = await categoryController.GetTopCategoriesAsync();
         }
 
+        public IActionResult OnGetTopCategories(string categoryName)
+        {
+            return RedirectToRecipes(categoryName);
+        }
+
         public async Task<IActionResult> OnGetSubcategoriesAsync(string categoryName)
         {
             var category = await categoryController.GetByNameAsync<Category>(categoryName);
             Categories = category.Children;
 
             if (!Categories.Any())
-                return RedirectToPage("Recipes", "InCategory", new { categoryName });
+                return RedirectToRecipes(categoryName);
 
             return Page();
+        }
+
+        public IActionResult RedirectToRecipes(string categoryName)
+        {
+            return RedirectToPage("/Recipes/RecipesList", "InCategory", new { categoryName });
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿@page
-@model CategoriesModel
+@model CategoriesListModel
 @{
     ViewData["Title"] = "Categories";
 }
@@ -13,7 +13,7 @@
     {
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0">@category.Name</h5>
+                <h5 class="mb-0"><a class="text-dark text-decoration-none" asp-page-handler="TopCategories" asp-route-categoryName="@category.Name">@category.Name</a></h5>
             </div>
 
             <div class="card-body">
