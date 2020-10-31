@@ -12,16 +12,28 @@
     @foreach (var category in Model.Categories)
     {
         <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0"><a class="text-dark text-decoration-none" asp-page-handler="TopCategories" asp-route-categoryName="@category.Name">@category.Name</a></h5>
+            <div class="card-header d-flex flex-row justify-content-between">
+                <h5 class="mb-0 ">
+                    <a class="text-dark text-decoration-none" asp-page-handler="TopCategories" asp-route-categoryName="@category.Name">@category.Name</a>
+                </h5>
+                <a class="text-muted text-decoration-none" asp-page="Forms/AddCategory" asp-page-handler="Category" asp-route-id="@category.Id">Edit</a>
             </div>
 
             <div class="card-body">
                 @foreach (var subcategory in category.Children)
                 {
-                    <p class="card-text"><a class="text-dark text-decoration-none" asp-page-handler="Subcategories" asp-route-categoryName="@subcategory.Name">@subcategory.Name</a></p>
+                    <div class="d-flex flex-row justify-content-between subcategory">
+                        <p class="card-text"><a class="text-dark text-decoration-none" asp-page-handler="Subcategories" asp-route-categoryName="@subcategory.Name">@subcategory.Name</a></p>
+                        <a class="text-muted text-decoration-none" asp-page="Forms/AddCategory" asp-page-handler="Category" asp-route-id="@category.Id">Edit</a>
+                    </div>
                 }
             </div>
+
+            <style>
+                .subcategory:last-child p {
+                    margin-bottom: 0;
+                }
+            </style>
         </div>
     }
 </div>

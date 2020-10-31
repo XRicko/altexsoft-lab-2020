@@ -2,8 +2,8 @@
 using RecipeBook.Core.Controllers;
 using RecipeBook.Core.Entities;
 using RecipeBook.Core.Exceptions;
-using RecipeBook.Core.Extensions;
 using RecipeBook.SharedKernel;
+using RecipeBook.SharedKernel.Extensions;
 using RecipeBook.SharedKernel.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -44,14 +44,14 @@ namespace RecipeBook.Core.Tests
         }
 
         [Fact]
-        public async Task CreateRecipeAsync_ShouldReturnNewRecipe()
+        public async Task GetOrCreateRecipeAsync_ShouldReturnNewRecipe()
         {
             // Arrange
             repoMock.Setup(x => x.GetAsync<Recipe>(recipeName.StandardizeName()))
                 .ReturnsAsync(() => null);
 
             // Act
-            Recipe actual = await controller.CreateRecipeAsync(recipeName, category, description, recipeIngredients, instruction, duration);
+            Recipe actual = await controller.GetOrCreateRecipeAsync(recipeName, category, description, recipeIngredients, instruction, duration);
 
             // Assert
             Assert.Equal(recipeName.StandardizeName(), actual.Name);
@@ -59,14 +59,14 @@ namespace RecipeBook.Core.Tests
         }
 
         [Fact]
-        public async Task CreateRecipeAsync_ShouldReturnExistingRecipe()
+        public async Task GetOrCreateRecipeAsync_ShouldReturnExistingRecipe()
         {
             // Arrange
             repoMock.Setup(x => x.GetAsync<Recipe>(recipeName.StandardizeName()))
                 .ReturnsAsync(recipe);
 
             // Act
-            Recipe actual = await controller.CreateRecipeAsync(recipeName, category, description, recipeIngredients, instruction, duration);
+            Recipe actual = await controller.GetOrCreateRecipeAsync(recipeName, category, description, recipeIngredients, instruction, duration);
 
             // Assert
             Assert.Same(recipe, actual);

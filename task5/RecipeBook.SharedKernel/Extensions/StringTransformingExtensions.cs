@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace RecipeBook.Core.Extensions
+namespace RecipeBook.SharedKernel.Extensions
 {
     public static class StringTransformingExtensions
     {

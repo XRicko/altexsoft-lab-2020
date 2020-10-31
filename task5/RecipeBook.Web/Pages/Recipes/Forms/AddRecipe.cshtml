@@ -4,42 +4,44 @@
     ViewData["Title"] = "AddRecipe";
 }
 
-<h1>Add recipe</h1>
+<h1>@Model.Message</h1>
 
 <form method="post" class="general-recipe-info">
+    @Html.HiddenFor(m => m.Recipe.Id)
+
     <div class="form-group">
-        <label asp-for="Name">Recipe name</label>
-        <input type="text" asp-for="Name" class="form-control " id="recipeName" placeholder="Enter recipe name" required />
+        <label asp-for="Recipe.Name">Recipe name</label>
+        <input type="text" asp-for="Recipe.Name" value="@Model.Recipe?.Name" class="form-control " id="recipeName" placeholder="Enter recipe name" required />
     </div>
 
     <div class="form-group">
         <label asp-for="CategoryName">Category</label>
-        <input type="text" asp-for="CategoryName" class="form-control" placeholder="Enter category" required />
+        <input type="text" asp-for="CategoryName" value="@Model.Recipe?.Category?.Name" class="form-control" placeholder="Enter category" required />
     </div>
 
     <div class="form-group">
         <label asp-for="ParentCategoryName">Parent category name</label>
-        <input type="text" asp-for="ParentCategoryName" class="form-control" placeholder="Enter parent category" />
+        <input type="text" asp-for="ParentCategoryName" value="@Model.Recipe?.Category?.Parent?.Name" class="form-control" placeholder="Enter parent category" />
     </div>
 
     <div class="form-group">
-        <label asp-for="Description">Brief description</label>
-        <input type="text" asp-for="Description" class="form-control" placeholder="Enter a brief description" required />
+        <label asp-for="Recipe.Description">Brief description</label>
+        <input type="text" asp-for="Recipe.Description" value="@Model.Recipe?.Description" class="form-control" placeholder="Enter a brief description" required />
     </div>
 
     <div class="form-group">
         <label asp-for="Ingredients">Ingredients (comma-separated e.g. water, pork etc.)</label>
-        <textarea asp-for="Ingredients" class="form-control ingredients" rows="2" placeholder="Enter ingredients" required></textarea>
+        @Html.TextAreaFor(m => m.Ingredients, new { @class = "form-control", @placeholder = "Enter ingredients", required = "required" })
     </div>
 
     <div class="form-group">
-        <label asp-for="Instruction">Instruction</label>
-        <textarea asp-for="Instruction" class="form-control" rows="4" placeholder="Enter instruction" required></textarea>
+        <label asp-for="Recipe.Instruction">Instruction</label>
+        @Html.TextAreaFor(m => m.Recipe.Instruction, new { @class = "form-control", @rows = 4, @placeholder = "Enter instruction", required = "required" })
     </div>
 
     <div class="form-group">
-        <label asp-for="Duration">Duration in minutes</label>
-        <input type="number" min="1" value="1" asp-for="Duration" class="form-control" placeholder="Enter duration" required />
+        <label asp-for="Recipe.DurationInMinutes">Duration in minutes</label>
+        <input type="number" min="1" value="@Model.Recipe?.DurationInMinutes" asp-for="Recipe.DurationInMinutes" class="form-control" placeholder="Enter duration" required />
     </div>
 
     <button type="submit" class="btn btn-primary">Next</button>

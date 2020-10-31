@@ -1,11 +1,25 @@
-﻿using System;
+﻿using RecipeBook.SharedKernel.Extensions;
+using System;
 
 namespace RecipeBook.SharedKernel
 {
     public abstract class BaseEntity
     {
-        public int Id { get; set; }
-        public string Name { get; private set; }
+        private int id;
+        private string name;
+
+        public int Id
+        {
+            get => id;
+            set
+            {
+                if (value < 1)
+                    throw new ArgumentException($"Id should be greater than 0. {id} given instead");
+                else
+                    id = value;
+            }
+        }
+        public string Name { get => name; set => name = value.StandardizeName(); }
 
         protected BaseEntity(string name)
         {
@@ -14,5 +28,7 @@ namespace RecipeBook.SharedKernel
 
             Name = name;
         }
+
+        protected BaseEntity() { }
     }
 }

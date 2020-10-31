@@ -18,6 +18,11 @@ namespace RecipeBook.Infrastructure.Data
             this.context = context;
         }
 
+        public Task<T> GetAsync<T>(int id) where T : BaseEntity
+        {
+            return context.Set<T>().SingleOrDefaultAsync(x => x.Id == id);
+        }
+
         public Task<T> GetAsync<T>(string name) where T : BaseEntity
         {
             return context.Set<T>().SingleOrDefaultAsync(x => x.Name == name);
@@ -41,6 +46,12 @@ namespace RecipeBook.Infrastructure.Data
         public async Task AddAsync<T>(T entity) where T : BaseEntity
         {
             await context.Set<T>().AddAsync(entity);
+        }
+
+        public void Update<T>(T entity) where T : BaseEntity
+        {
+            context.Set<T>().Attach(entity);
+            context.Entry(entity).State = EntityState.Modified;
         }
     }
 }

@@ -35,9 +35,9 @@ namespace RecipeBook.Web.Pages
         public async Task<IActionResult> OnGetSubcategoriesAsync(string categoryName)
         {
             var category = await categoryController.GetByNameAsync<Category>(categoryName);
-            Categories = category.Children;
+            Categories = new List<Category> { category };
 
-            if (!Categories.Any())
+            if (!category.Children.Any())
                 return RedirectToRecipes(categoryName);
 
             return Page();

@@ -1,27 +1,43 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using RecipeBook.Core.Controllers;
+using RecipeBook.Core.Entities;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace RecipeBook.Web.Pages.Forms
 {
     [BindProperties]
     public class AddRecipeModel : PageModel
     {
-        public string Name { get; set; }
+        private readonly RecipeController recipeController;
+
+        public string Message { get; private set; } = "Add recipe";
+
+        public Recipe Recipe { get; set; }
+
         public string CategoryName { get; set; }
         public string ParentCategoryName { get; set; }
-        public string Description { get; set; }
         public string Ingredients { get; set; }
-        public string Instruction { get; set; }
-        public double Duration { get; set; }
 
-        public void OnGet()
+        public AddRecipeModel(RecipeController recipeController)
         {
+            this.recipeController = recipeController;
+        }
 
+        public async Task OnGetRecipeAsync(int id)
+        {
+            Message = "Update recipe";
+
+            Recipe = await recipeController.GetByIdAsync<Recipe>(id);
+            Ingredients = string.Join(", ", Recipe.RecipeIngredients.Select(i => i.Ingredient.Name));
         }
 
         public IActionResult OnPost()
         {
-            return RedirectToPage("AddRecipeIngredients", new { Name, CategoryName, ParentCategoryName, Description, Instruction, Duration, Ingredients });
+            return Recipe.Id == 0
+                ? RedirectToPage("AddRecipeIngredients", new { Recipe.Name, CategoryName, ParentCategoryName, Recipe.Description, Ingredients, Recipe.Instruction, Recipe.DurationInMinutes })
+                : RedirectToPage("AddRecipeIngredients", "Recipe", new { RecipeId = Recipe.Id, Recipe.Name, CategoryName, ParentCategoryName, Recipe.Description, Ingredients, Recipe.Instruction, Recipe.DurationInMinutes });
         }
     }
 }

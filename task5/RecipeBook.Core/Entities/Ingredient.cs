@@ -8,5 +8,7 @@ namespace RecipeBook.Core.Entities
         public virtual ICollection<RecipeIngredient> RecipeIngredients { get; }
 
         public Ingredient(string name) : base(name) { }
+
+        public Ingredient() : base() { }
     }
 }

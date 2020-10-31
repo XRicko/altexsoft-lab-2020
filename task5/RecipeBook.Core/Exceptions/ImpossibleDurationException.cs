@@ -12,7 +12,7 @@ namespace RecipeBook.Core.Exceptions
         public ImpossibleDurationException(string message, Exception inner)
             : base(message, inner) { }
 
-        public ImpossibleDurationException(double duration)
+        public ImpossibleDurationException(double? duration)
             : this($"Duration should be greater than 0. {duration} given instead") { }
     }
 }

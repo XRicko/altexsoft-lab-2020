@@ -17,7 +17,8 @@
             </div>
 
             <div class="card-body">
-                <a class="btn btn-outline-secondary" asp-page="/Recipes/RecipesList" asp-page-handler="WithIngredient" asp-route-ingredientName="@ingredient.Name">Recipes</a>
+                <a class="btn btn-outline-info" asp-page="/Recipes/RecipesList" asp-page-handler="WithIngredient" asp-route-ingredientName="@ingredient.Name">Recipes</a>
+                <a class="btn btn-light" asp-page="Forms/AddIngredient" asp-page-handler="Ingredient" asp-route-name="@ingredient.Name">Edit</a>
             </div>
         </div>
     }

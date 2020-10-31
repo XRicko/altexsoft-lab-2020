@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using RecipeBook.Core.Controllers;
 using RecipeBook.Core.Entities;
@@ -10,14 +9,12 @@ namespace RecipeBook.Web.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly ILogger<IndexModel> logger;
         private readonly RecipeController recipeController;
 
         public IEnumerable<Recipe> Recipes { get; private set; }
 
-        public IndexModel(ILogger<IndexModel> logger, RecipeController recipeController)
+        public IndexModel(RecipeController recipeController)
         {
-            this.logger = logger;
             this.recipeController = recipeController;
         }
 

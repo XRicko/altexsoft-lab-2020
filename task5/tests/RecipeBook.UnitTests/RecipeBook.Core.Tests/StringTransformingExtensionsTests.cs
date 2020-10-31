@@ -1,10 +1,10 @@
-﻿using RecipeBook.Core.Extensions;
+﻿using RecipeBook.SharedKernel.Extensions;
 using System.Collections.Generic;
 using Xunit;
 
 namespace RecipeBook.Core.Tests
 {
-    public class StringTransformingExtensions
+    public class StringTransformingExtensionsTests
     {
         [Fact]
         public void StandardizeName_ShouldReturnStringToTitleCase()
