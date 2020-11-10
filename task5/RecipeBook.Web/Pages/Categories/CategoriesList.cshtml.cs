@@ -4,15 +4,16 @@ using Microsoft.Extensions.Logging;
 using RecipeBook.Core.Controllers;
 using RecipeBook.Core.Entities;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace RecipeBook.Web.Pages
+namespace RecipeBook.Web.Pages.Categories
 {
     public class CategoriesListModel : PageModel
     {
         private readonly ILogger<CategoriesListModel> logger;
         private readonly CategoryController categoryController;
+
+        public string Message { get; set; } = "Categories";
 
         public IEnumerable<Category> Categories { get; private set; }
 
@@ -27,25 +28,14 @@ namespace RecipeBook.Web.Pages
             Categories = await categoryController.GetTopCategoriesAsync();
         }
 
-        public IActionResult OnGetTopCategories(string categoryName)
+        public async Task<IActionResult> OnGetSubcategoriesAsync(int id)
         {
-            return RedirectToRecipes(categoryName);
-        }
+            var category = await categoryController.GetByIdAsync<Category>(id);
+            Categories = category.Children;
 
-        public async Task<IActionResult> OnGetSubcategoriesAsync(string categoryName)
-        {
-            var category = await categoryController.GetByNameAsync<Category>(categoryName);
-            Categories = new List<Category> { category };
-
-            if (!category.Children.Any())
-                return RedirectToRecipes(categoryName);
+            Message += $" in {category.Name}";
 
             return Page();
-        }
-
-        public IActionResult RedirectToRecipes(string categoryName)
-        {
-            return RedirectToPage("/Recipes/RecipesList", "InCategory", new { categoryName });
         }
     }
 }

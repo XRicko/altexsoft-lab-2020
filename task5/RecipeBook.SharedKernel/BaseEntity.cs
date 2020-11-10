@@ -15,17 +15,24 @@ namespace RecipeBook.SharedKernel
             {
                 if (value < 1)
                     throw new ArgumentException($"Id should be greater than 0. {id} given instead");
-                else
-                    id = value;
+                
+                id = value;
             }
         }
-        public string Name { get => name; set => name = value.StandardizeName(); }
+        public string Name
+        {
+            get => name; 
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentNullException(nameof(name), "Name cannot be null");
+
+                name = value.StandardizeName();
+            }
+        }
 
         protected BaseEntity(string name)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentNullException(nameof(name), "Name cannot be null");
-
             Name = name;
         }
 

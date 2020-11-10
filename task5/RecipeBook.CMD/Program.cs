@@ -57,7 +57,7 @@ namespace RecipeBook.UI
                         logger.LogInformation("Getting records...");
 
                         var categories = await categoryController.GetTopCategoriesAsync();
-                        var recipies = await recipeController.GetRecipesWithoutCategoryAsync();
+                        ICollection<Recipe> recipies = new List<Recipe>();
 
                         while (true)
                         {
@@ -75,7 +75,7 @@ namespace RecipeBook.UI
                             var rec = await recipeController.GetByNameAsync<Recipe>(name);
                             var category = await categoryController.GetByNameAsync<Category>(name);
 
-                            if (rec is object)
+                            if (!(rec is null))
                             {
                                 ShowRecipe(rec);
                                 break;
@@ -125,8 +125,8 @@ namespace RecipeBook.UI
                     category = await categoryController.GetOrCreateCategoryAsync(categoryName);
                     break;
                 }
-                else
-                    Console.Write("Invalid input");
+                
+                Console.Write("Invalid input");
             }
 
             string description = Request("Enter a brief description: ");
@@ -160,10 +160,10 @@ namespace RecipeBook.UI
         {
             while (true)
             {
-                if (double.TryParse(Request($"Enter {name}: "), out double value))
-                    return value;
-                else
+                if (!double.TryParse(Request($"Enter {name}: "), out double value))
                     Console.Write($"Invalid input for {name}");
+                
+                return value;
             }
         }
 

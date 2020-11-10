@@ -12,16 +12,6 @@ namespace RecipeBook.Core.Controllers
     {
         public RecipeController(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
-        public async Task<IEnumerable<Recipe>> GetRecipesWithIngredientAsync(string ingredientName)
-        {
-            var recipes = await GetItemsAsync<Recipe>();
-            var recipesWithIngredient = recipes.SelectMany(r => r.RecipeIngredients)
-                .Where(ri => ri.Ingredient.Name == ingredientName.StandardizeName())
-                .Select(ri => ri.Recipe);
-
-            return recipesWithIngredient;
-        }
-
         public async Task<Recipe> GetOrCreateRecipeAsync(string name, Category category, string desription, List<RecipeIngredient> recipeIngredients, string instruction, double durationInMinutes)
         {
             var recipe = await GetByNameAsync<Recipe>(name);
@@ -43,7 +33,7 @@ namespace RecipeBook.Core.Controllers
 
             Category category = await UnitOfWork.Repository.GetAsync(recipe.Category);
 
-            if (category is object)
+            if (!(category is null))
                 recipe.Category = category;
 
             await AddItemAsync(recipe.Category);
@@ -54,15 +44,21 @@ namespace RecipeBook.Core.Controllers
         {
             Recipe r = await UnitOfWork.Repository.GetAsync(recipe);
 
-            if (r is object)
+            if (!(r is null))
                 throw new RecipeExistsException(recipe);
         }
 
-        public Task<IEnumerable<Recipe>> GetRecipesWithoutCategoryAsync() =>
-            UnitOfWork.Repository.FindAsync<Recipe>(r => r.Category == null);
+        public Task<IEnumerable<Recipe>> GetRecipesInCategoryAsync(int categoryId) =>
+            UnitOfWork.Repository.FindAsync<Recipe>(r => r.Category.Id == categoryId);
 
-        public Task<IEnumerable<Recipe>> GetRecipesInCategoryAsync(string categoryName) =>
-            UnitOfWork.Repository.FindAsync<Recipe>(r => r.Category.Name == categoryName.StandardizeName());
+        public async Task<IEnumerable<Recipe>> GetRecipesWithIngredientAsync(int ingredientId)
+        {
+            var recipes = await GetItemsAsync<Recipe>();
+            var recipesWithIngredient = recipes.SelectMany(r => r.RecipeIngredients)
+                .Where(ri => ri.Ingredient.Id == ingredientId)
+                .Select(ri => ri.Recipe);
 
+            return recipesWithIngredient;
+        }
     }
 }

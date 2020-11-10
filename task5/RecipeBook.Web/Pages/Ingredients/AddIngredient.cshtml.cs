@@ -4,7 +4,7 @@ using RecipeBook.Core.Controllers;
 using RecipeBook.Core.Entities;
 using System.Threading.Tasks;
 
-namespace RecipeBook.Web.Pages.Ingredients.Forms
+namespace RecipeBook.Web.Pages.Ingredients
 {
     public class AddIngredientsModel : PageModel
     {
@@ -20,10 +20,10 @@ namespace RecipeBook.Web.Pages.Ingredients.Forms
             this.ingredientController = ingredientController;
         }
 
-        public async Task OnGetIngredientAsync(string name)
+        public async Task OnGetIngredientAsync(int id)
         {
             Message = "Update ingredient";
-            Ingredient = await ingredientController.GetByNameAsync<Ingredient>(name);
+            Ingredient = await ingredientController.GetByIdAsync<Ingredient>(id);
         }
 
         public async Task<IActionResult> OnPostAsync()

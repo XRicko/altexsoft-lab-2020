@@ -1,11 +1,11 @@
 ﻿@page
-@model CategoriesListModel
+@model RecipeBook.Web.Pages.Categories.CategoriesListModel
 @{
     ViewData["Title"] = "Categories";
 }
 
 <div class="text-left">
-    <h1>Categories</h1>
+    <h1>@Model.Message</h1>
 </div>
 
 <div class="card-columns">
@@ -13,18 +13,28 @@
     {
         <div class="card">
             <div class="card-header d-flex flex-row justify-content-between">
-                <h5 class="mb-0 ">
-                    <a class="text-dark text-decoration-none" asp-page-handler="TopCategories" asp-route-categoryName="@category.Name">@category.Name</a>
-                </h5>
-                <a class="text-muted text-decoration-none" asp-page="Forms/AddCategory" asp-page-handler="Category" asp-route-id="@category.Id">Edit</a>
+                <h5 class="mb-0 ">@category.Name</h5>
+
+                <div class="buttons">
+                    <a class="text-muted text-decoration-none" asp-page="AddCategory" asp-page-handler="Add" asp-route-parentName="@category.Name">Add</a>
+                    <a class="text-muted text-decoration-none" asp-page="AddCategory" asp-page-handler="Edit" asp-route-id="@category.Id">Edit</a>
+                    <a class="text-muted text-decoration-none btn-recipes" asp-page="/Recipes/RecipesList" asp-page-handler="InCategory" asp-route-categoryId="@category.Id" asp-route-categoryName="@category.Name">Recipes</a>
+                </div>
             </div>
 
             <div class="card-body">
                 @foreach (var subcategory in category.Children)
                 {
                     <div class="d-flex flex-row justify-content-between subcategory">
-                        <p class="card-text"><a class="text-dark text-decoration-none" asp-page-handler="Subcategories" asp-route-categoryName="@subcategory.Name">@subcategory.Name</a></p>
-                        <a class="text-muted text-decoration-none" asp-page="Forms/AddCategory" asp-page-handler="Category" asp-route-id="@category.Id">Edit</a>
+                        <p class="card-text">
+                            <a class="text-dark text-decoration-none" asp-page-handler="Subcategories" asp-route-id="@subcategory.Id">@subcategory.Name</a>
+                        </p>
+
+                        <div class="buttons">
+                            <a class="text-muted text-decoration-none" asp-page="AddCategory" asp-page-handler="Add" asp-route-parentName="@subcategory.Name">Add</a>
+                            <a class="text-muted text-decoration-none" asp-page="AddCategory" asp-page-handler="Edit" asp-route-id="@subcategory.Id">Edit</a>
+                            <a class="text-muted text-decoration-none" asp-page="/Recipes/RecipesList" asp-page-handler="InCategory" asp-route-categoryId="@subcategory.Id" asp-route-categoryName="@subcategory.Name">Recipes</a>
+                        </div>
                     </div>
                 }
             </div>
@@ -32,6 +42,10 @@
             <style>
                 .subcategory:last-child p {
                     margin-bottom: 0;
+                }
+
+                .buttons a:not(:last-child) {
+                    margin-right: 5px;
                 }
             </style>
         </div>

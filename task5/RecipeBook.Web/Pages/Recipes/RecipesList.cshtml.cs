@@ -5,7 +5,7 @@ using RecipeBook.Core.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace RecipeBook.Web.Pages
+namespace RecipeBook.Web.Pages.Recipes
 {
     public class RecipesListModel : PageModel
     {
@@ -27,16 +27,16 @@ namespace RecipeBook.Web.Pages
             Recipes = await recipeController.GetItemsAsync<Recipe>();
         }
 
-        public async Task OnGetWithIngredientAsync(string ingredientName)
+        public async Task OnGetWithIngredientAsync(int ingredientId, string ingredientName)
         {
-            Recipes = await recipeController.GetRecipesWithIngredientAsync(ingredientName);
-            Message = $"Recipes with {ingredientName}";
+            Recipes = await recipeController.GetRecipesWithIngredientAsync(ingredientId);
+            Message += $" with {ingredientName}";
         }
 
-        public async Task OnGetInCategory(string categoryName)
+        public async Task OnGetInCategory(int categoryId, string categoryName)
         {
-            Recipes = await recipeController.GetRecipesInCategoryAsync(categoryName);
-            Message = $"Recipes in category {categoryName}";
+            Recipes = await recipeController.GetRecipesInCategoryAsync(categoryId);
+            Message += $" in category {categoryName}";
         }
     }
 }

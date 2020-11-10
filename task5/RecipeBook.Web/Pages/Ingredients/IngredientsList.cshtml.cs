@@ -5,7 +5,7 @@ using RecipeBook.Core.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace RecipeBook.Web.Pages
+namespace RecipeBook.Web.Pages.Ingredients
 {
     public class IngredientsListModel : PageModel
     {

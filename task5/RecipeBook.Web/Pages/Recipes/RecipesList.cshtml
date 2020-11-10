@@ -1,5 +1,5 @@
 ﻿@page
-@model RecipesListModel
+@model RecipeBook.Web.Pages.Recipes.RecipesListModel
 @{
     ViewData["Title"] = "Recipes";
 }
@@ -18,8 +18,8 @@
 
             <div class="card-body">
                 <p class="card-text">@recipe.Description</p>
-                <a class="btn btn-outline-info" asp-page="RecipeDetails" asp-route-name="@recipe.Name">More info</a>
-                <a class="btn btn-light" asp-page="Forms/AddRecipe" asp-page-handler="Recipe" asp-route-id="@recipe.Id">Edit</a>
+                <a class="btn btn-outline-info" asp-page="RecipeDetails" asp-route-id="@recipe.Id">More info</a>
+                <a class="btn btn-light" asp-page="AddRecipe" asp-page-handler="Recipe" asp-route-id="@recipe.Id">Edit</a>
             </div>
         </div>
     }

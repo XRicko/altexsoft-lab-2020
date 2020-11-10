@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
 using RecipeBook.Core.Controllers;
 using RecipeBook.Core.Entities;
 using System.Threading.Tasks;
 
-namespace RecipeBook.Web.Pages.Categories.Forms
+namespace RecipeBook.Web.Pages.Categories
 {
     [BindProperties]
     public class AddCategoryModel : PageModel
@@ -22,7 +21,13 @@ namespace RecipeBook.Web.Pages.Categories.Forms
             this.categoryController = categoryController;
         }
 
-        public async Task OnGetCategoryAsync(int id)
+        public void OnGetAdd(string parentName)
+        {
+            Message += $" to {parentName}";
+            ParentName = parentName;
+        }
+
+        public async Task OnGetEditAsync(int id)
         {
             Message = "Update category";
             Category = await categoryController.GetByIdAsync<Category>(id);
@@ -40,7 +45,7 @@ namespace RecipeBook.Web.Pages.Categories.Forms
                 var category = await categoryController.GetByIdAsync<Category>(Category.Id);
                 category.Name = Category.Name;
 
-                await categoryController.UpdateCategoryAsync(category, ParentName);
+                await categoryController.UpdateAsync(category);
             }
 
             return RedirectToPage("/Categories/CategoriesList");

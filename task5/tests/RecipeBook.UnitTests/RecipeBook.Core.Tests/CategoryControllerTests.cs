@@ -124,27 +124,5 @@ namespace RecipeBook.Core.Tests
             repoMock.Verify(x => x.GetAsync<Category>(It.Is<string>(s => s == expectedName ||
                                                                          s == standardizedParentName)), Times.Exactly(2));
         }
-
-        [Fact]
-        public async Task UpdateCategoryAsync_ShouldGiveParentToCategory()
-        {
-            // Arrange
-            var subcategoryName = "Hot";
-            var parentName = "Soups";
-            var categoryName = subcategoryName + " " + parentName;
-
-            var categoryToUpdate = new Category(subcategoryName);
-
-            repoMock.Setup(x => x.Update(It.Is<Category>(c => c.Name == categoryName)));
-
-            // Act
-            await controller.UpdateCategoryAsync(categoryToUpdate, parentName);
-
-            // Assert
-            Assert.Equal(categoryName, categoryToUpdate.Name);
-            Assert.Equal(parentName, categoryToUpdate.Parent.Name);
-
-            repoMock.Verify(x => x.Update(It.Is<Category>(c => c.Name == categoryName)), Times.Once);
-        }
     }
 }

@@ -4,7 +4,7 @@ using RecipeBook.Core.Controllers;
 using RecipeBook.Core.Entities;
 using System.Threading.Tasks;
 
-namespace RecipeBook.Web.Pages
+namespace RecipeBook.Web.Pages.Recipes
 {
     public class RecipeDetailsModel : PageModel
     {
@@ -18,9 +18,9 @@ namespace RecipeBook.Web.Pages
             this.recipeController = recipeController;
         }
 
-        public async Task<PageResult> OnGetAsync(string name)
+        public async Task<PageResult> OnGetAsync(int id)
         {
-            Recipe = await recipeController.GetByNameAsync<Recipe>(name);
+            Recipe = await recipeController.GetByIdAsync<Recipe>(id);
 
             return Page();
         }
