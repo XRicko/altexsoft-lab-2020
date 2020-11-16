@@ -80,11 +80,9 @@ namespace RecipeBook.Web.Pages.Recipes
 
             for (int i = 0; i < IngredientsChecked.Count; i++)
             {
-                var recipeIngredient = new RecipeIngredient
-                {
-                    Ingredient = await ingredientController.GetByIdAsync<Ingredient>(IngredientsChecked[i]),
-                    Amount = Amounts[IngredientsChecked[i] - 1]
-                };
+                var recipeIngredient = new RecipeIngredient();
+                recipeIngredient.Ingredient = await ingredientController.GetByIdAsync<Ingredient>(IngredientsChecked[i]);
+                recipeIngredient.Amount = Amounts[IngredientsChecked[i] - 1];
 
                 recipeIngredients.Add(recipeIngredient);
             }

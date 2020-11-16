@@ -35,7 +35,7 @@
                     <input name="IngredientsChecked" type="checkbox" class="form-check-input check" data-group="group_@i" value="@Model.Ingredients[i].Id" @(Model.IngredientsChecked.Contains(Model.Ingredients[i].Id) ? "checked" : "") />
                     <label class="form-check-label" style="margin-right: 5px;" asp-for="Ingredients[i].Name">@Model.Ingredients[i].Name</label>
 
-                    <input type="text" asp-for="Amounts[Model.Ingredients[i].Id - 1]" value="@Model.Amounts[Model.Ingredients[i].Id - 1]" class="form-control amount-field group_@i" disabled placeholder="Enter amount" />
+                    <input type="text" asp-for="Amounts[Model.Ingredients[i].Id - 1]" value="@Model.Amounts[Model.Ingredients[i].Id - 1]" class="form-control amount-field group_@i" readonly placeholder="Enter amount" />
                 </div>
             }
         </div>

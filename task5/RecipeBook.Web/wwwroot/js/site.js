@@ -6,7 +6,7 @@
 $("input.check:checkbox").change(function () {
     const input = $("." + $(this).data("group"));
 
-    input.prop("disabled", !this.checked);
+    input.prop("readonly", !this.checked);
     input.prop("required", this.checked);
 });
 
@@ -16,7 +16,7 @@ $(function () {
 
     for (var i = 0; i < inputs.length; i++) {
         if (checkboxes[i].checked) {
-            inputs[i].disabled = false;
+            inputs[i].readOnly = false;
             inputs[i].required = true;
         }
     }
