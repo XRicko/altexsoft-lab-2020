@@ -116,7 +116,8 @@ namespace RecipeBook.UI
                 if (key == "y")
                 {
                     string parentName = Request("Enter parent category: ");
-                    category = await categoryController.GetOrCreateCategoryAsync(categoryName, parentName);
+                    var parentCategory = await categoryController.GetByNameAsync<Category>(parentName);
+                    category = await categoryController.GetOrCreateCategoryAsync(categoryName, parentCategory.Id);
 
                     break;
                 }
@@ -125,7 +126,7 @@ namespace RecipeBook.UI
                     category = await categoryController.GetOrCreateCategoryAsync(categoryName);
                     break;
                 }
-                
+
                 Console.Write("Invalid input");
             }
 
@@ -162,7 +163,7 @@ namespace RecipeBook.UI
             {
                 if (!double.TryParse(Request($"Enter {name}: "), out double value))
                     Console.Write($"Invalid input for {name}");
-                
+
                 return value;
             }
         }

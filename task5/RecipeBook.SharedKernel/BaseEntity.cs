@@ -15,13 +15,13 @@ namespace RecipeBook.SharedKernel
             {
                 if (value < 1)
                     throw new ArgumentException($"Id should be greater than 0. {id} given instead");
-                
+
                 id = value;
             }
         }
         public string Name
         {
-            get => name; 
+            get => name;
             set
             {
                 if (string.IsNullOrWhiteSpace(value))

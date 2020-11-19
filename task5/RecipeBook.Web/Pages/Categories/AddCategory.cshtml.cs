@@ -14,17 +14,17 @@ namespace RecipeBook.Web.Pages.Categories
         public string Message { get; private set; } = "Add category";
 
         public Category Category { get; set; }
-        public string ParentName { get; set; }
+        public int ParentId { get; set; }
 
         public AddCategoryModel(CategoryController categoryController)
         {
             this.categoryController = categoryController;
         }
 
-        public void OnGetAdd(string parentName)
+        public void OnGetAdd(string parentName, int parentId)
         {
             Message += $" to {parentName}";
-            ParentName = parentName;
+            ParentId = parentId;
         }
 
         public async Task OnGetEditAsync(int id)
@@ -37,7 +37,7 @@ namespace RecipeBook.Web.Pages.Categories
         {
             if (Category.Id == 0)
             {
-                Category = await categoryController.GetOrCreateCategoryAsync(Category.Name, ParentName);
+                Category = await categoryController.GetOrCreateCategoryAsync(Category.Name, ParentId);
                 await categoryController.AddItemAsync(Category);
             }
             else

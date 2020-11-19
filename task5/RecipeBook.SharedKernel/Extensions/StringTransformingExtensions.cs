@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace RecipeBook.SharedKernel.Extensions
@@ -13,11 +12,6 @@ namespace RecipeBook.SharedKernel.Extensions
                 return null;
 
             return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower()).Trim();
-        }
-
-        public static string RemoveDublicates(this string name)
-        {
-            return string.Join(" ", name.Split(' ').Distinct());
         }
 
         public static IList<string> GetWords(this string text)

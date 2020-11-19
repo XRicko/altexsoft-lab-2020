@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
 using RecipeBook.Core.Controllers;
 using RecipeBook.Core.Entities;
 using System.Collections.Generic;

@@ -1,6 +1,5 @@
 ﻿using RecipeBook.Core.Entities;
 using RecipeBook.Core.Exceptions;
-using RecipeBook.SharedKernel.Extensions;
 using RecipeBook.SharedKernel.Interfaces;
 using System.Collections.Generic;
 using System.Linq;

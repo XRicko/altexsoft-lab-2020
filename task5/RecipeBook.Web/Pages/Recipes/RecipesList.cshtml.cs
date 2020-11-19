@@ -10,16 +10,20 @@ namespace RecipeBook.Web.Pages.Recipes
     public class RecipesListModel : PageModel
     {
         private readonly ILogger<RecipesListModel> logger;
+
         private readonly RecipeController recipeController;
+        private readonly CategoryController categoryController;
 
         public string Message { get; private set; } = "Recipes";
 
         public IEnumerable<Recipe> Recipes { get; private set; }
 
-        public RecipesListModel(ILogger<RecipesListModel> logger, RecipeController recipeController)
+        public RecipesListModel(ILogger<RecipesListModel> logger, RecipeController recipeController, CategoryController categoryController)
         {
             this.logger = logger;
+
             this.recipeController = recipeController;
+            this.categoryController = categoryController;
         }
 
         public async Task OnGetAsync()
@@ -33,10 +37,12 @@ namespace RecipeBook.Web.Pages.Recipes
             Message += $" with {ingredientName}";
         }
 
-        public async Task OnGetInCategory(int categoryId, string categoryName)
+        public async Task OnGetInCategory(int categoryId)
         {
-            Recipes = await recipeController.GetRecipesInCategoryAsync(categoryId);
-            Message += $" in category {categoryName}";
+            var category = await categoryController.GetByIdAsync<Category>(categoryId);
+            Recipes = category.Recipes;
+
+            Message += $" in category {category.Name}";
         }
     }
 }

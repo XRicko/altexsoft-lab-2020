@@ -20,7 +20,7 @@ namespace RecipeBook.Core.Entities
             {
                 if (string.IsNullOrWhiteSpace(value))
                     throw new ArgumentNullException(nameof(description), "Description cannot be null");
-                
+
                 description = value;
             }
         }
@@ -31,7 +31,7 @@ namespace RecipeBook.Core.Entities
             {
                 if (string.IsNullOrWhiteSpace(value))
                     throw new ArgumentNullException(nameof(instruction), "Instruction cannot be null");
-                
+
                 instruction = value;
             }
         }
@@ -42,7 +42,7 @@ namespace RecipeBook.Core.Entities
             {
                 if (value <= 0)
                     throw new ImpossibleDurationException(value);
-                
+
                 durationInMinutes = value;
             }
         }

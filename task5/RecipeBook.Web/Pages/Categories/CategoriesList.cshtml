@@ -16,7 +16,7 @@
                 <h5 class="mb-0 ">@category.Name</h5>
 
                 <div class="buttons">
-                    <a class="text-muted text-decoration-none" asp-page="AddCategory" asp-page-handler="Add" asp-route-parentName="@category.Name">Add</a>
+                    <a class="text-muted text-decoration-none" asp-page="AddCategory" asp-page-handler="Add" asp-route-parentName="@category.Name" asp-route-parentId="@category.Id">Add</a>
                     <a class="text-muted text-decoration-none" asp-page="AddCategory" asp-page-handler="Edit" asp-route-id="@category.Id">Edit</a>
                     <a class="text-muted text-decoration-none btn-recipes" asp-page="/Recipes/RecipesList" asp-page-handler="InCategory" asp-route-categoryId="@category.Id" asp-route-categoryName="@category.Name">Recipes</a>
                 </div>
@@ -31,7 +31,7 @@
                         </p>
 
                         <div class="buttons">
-                            <a class="text-muted text-decoration-none" asp-page="AddCategory" asp-page-handler="Add" asp-route-parentName="@subcategory.Name">Add</a>
+                            <a class="text-muted text-decoration-none" asp-page="AddCategory" asp-page-handler="Add" asp-route-parentName="@subcategory.Name" asp-route-parentId="@subcategory.Id">Add</a>
                             <a class="text-muted text-decoration-none" asp-page="AddCategory" asp-page-handler="Edit" asp-route-id="@subcategory.Id">Edit</a>
                             <a class="text-muted text-decoration-none" asp-page="/Recipes/RecipesList" asp-page-handler="InCategory" asp-route-categoryId="@subcategory.Id" asp-route-categoryName="@subcategory.Name">Recipes</a>
                         </div>

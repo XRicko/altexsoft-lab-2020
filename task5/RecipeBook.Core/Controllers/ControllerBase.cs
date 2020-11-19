@@ -16,13 +16,13 @@ namespace RecipeBook.Core.Controllers
             UnitOfWork = unitOfWork;
         }
 
-        public Task<T> GetByNameAsync<T>(string name) where T : BaseEntity => 
+        public Task<T> GetByNameAsync<T>(string name) where T : BaseEntity =>
             UnitOfWork.Repository.GetAsync<T>(name.StandardizeName());
 
         public Task<T> GetByIdAsync<T>(int id) where T : BaseEntity =>
             UnitOfWork.Repository.GetAsync<T>(id);
 
-        public Task<IEnumerable<T>> GetItemsAsync<T>() where T : BaseEntity => 
+        public Task<IEnumerable<T>> GetItemsAsync<T>() where T : BaseEntity =>
             UnitOfWork.Repository.GetAllAsync<T>();
 
         public async Task AddItemAsync<T>(T entity) where T : BaseEntity
