@@ -47,9 +47,6 @@ namespace RecipeBook.Core.Controllers
                 throw new RecipeExistsException(recipe);
         }
 
-        public Task<IEnumerable<Recipe>> GetRecipesInCategoryAsync(int categoryId) =>
-            UnitOfWork.Repository.FindAsync<Recipe>(r => r.Category.Id == categoryId);
-
         public async Task<IEnumerable<Recipe>> GetRecipesWithIngredientAsync(int ingredientId)
         {
             var recipes = await GetItemsAsync<Recipe>();
