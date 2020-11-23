@@ -31,6 +31,8 @@ namespace RecipeBook.Core.Tests
 
             repoMock.Setup(x => x.GetAllAsync<Ingredient>())
                             .ReturnsAsync(expected);
+            repoMock.Setup(x => x.GetAllAsync<Ingredient>())
+                            .ReturnsAsync(expected);
 
             // Act
             var actual = await controller.GetItemsAsync<Ingredient>();

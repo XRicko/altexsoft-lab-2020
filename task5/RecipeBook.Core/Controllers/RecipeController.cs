@@ -53,7 +53,7 @@ namespace RecipeBook.Core.Controllers
             var recipesWithIngredient = recipes.SelectMany(r => r.RecipeIngredients)
                 .Where(ri => ri.Ingredient.Id == ingredientId)
                 .Select(ri => ri.Recipe);
-
+                
             return recipesWithIngredient;
         }
     }

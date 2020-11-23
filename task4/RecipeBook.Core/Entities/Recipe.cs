@@ -1,4 +1,5 @@
-﻿using RecipeBook.SharedKernel;
+﻿using RecipeBook.Core.Exceptions;
+using RecipeBook.SharedKernel;
 using System;
 using System.Collections.Generic;
 
@@ -21,7 +22,7 @@ namespace RecipeBook.Core.Entities
             if (string.IsNullOrWhiteSpace(description))
                 throw new ArgumentNullException(nameof(description), "Description cannot be null");
             if (durationInMinutes <= 0)
-                throw new ArgumentException("Duration cannot be 0 or less", nameof(durationInMinutes));
+                throw new ImpossibleDurationException(durationInMinutes);
             if (string.IsNullOrWhiteSpace(instruction))
                 throw new ArgumentNullException(nameof(instruction), "Instruction cannot be null");
 
