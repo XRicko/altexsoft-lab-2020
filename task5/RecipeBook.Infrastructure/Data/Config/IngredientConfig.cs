@@ -8,9 +8,6 @@ namespace RecipeBook.Infrastructure.Data.Config
     {
         public void Configure(EntityTypeBuilder<Ingredient> builder)
         {
-            builder.Property(i => i.Id)
-                .ValueGeneratedNever();
-
             builder.HasIndex(e => e.Name)
                 .IsUnique();
 

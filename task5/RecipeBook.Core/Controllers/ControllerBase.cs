@@ -31,10 +31,6 @@ namespace RecipeBook.Core.Controllers
 
             if (item is null)
             {
-                var items = await GetItemsAsync<T>();
-
-                entity.Id = items is null || !items.Any() ? 1 : items.OrderBy(i => i.Id).Last().Id + 1;
-
                 await UnitOfWork.Repository.AddAsync(entity);
                 await UnitOfWork.SaveAsync();
             }

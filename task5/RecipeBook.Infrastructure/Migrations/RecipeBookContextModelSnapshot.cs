@@ -15,19 +15,21 @@ namespace RecipeBook.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.9")
+                .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "5.0.0");
 
             modelBuilder.Entity("RecipeBook.Core.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(75)")
-                        .HasMaxLength(75);
+                        .HasMaxLength(75)
+                        .HasColumnType("nvarchar(75)");
 
                     b.Property<int?>("ParentId")
                         .HasColumnType("int");
@@ -45,12 +47,14 @@ namespace RecipeBook.Infrastructure.Migrations
             modelBuilder.Entity("RecipeBook.Core.Entities.Ingredient", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(75)")
-                        .HasMaxLength(75);
+                        .HasMaxLength(75)
+                        .HasColumnType("nvarchar(75)");
 
                     b.HasKey("Id");
 
@@ -63,15 +67,17 @@ namespace RecipeBook.Infrastructure.Migrations
             modelBuilder.Entity("RecipeBook.Core.Entities.Recipe", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(255)")
-                        .HasMaxLength(255);
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<double?>("DurationInMinutes")
                         .HasColumnType("float");
@@ -81,8 +87,8 @@ namespace RecipeBook.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(75)")
-                        .HasMaxLength(75);
+                        .HasMaxLength(75)
+                        .HasColumnType("nvarchar(75)");
 
                     b.HasKey("Id");
 
@@ -99,12 +105,12 @@ namespace RecipeBook.Infrastructure.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .UseIdentityColumn();
 
                     b.Property<string>("Amount")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("IngredientId")
                         .HasColumnType("int");
@@ -126,6 +132,8 @@ namespace RecipeBook.Infrastructure.Migrations
                     b.HasOne("RecipeBook.Core.Entities.Category", "Parent")
                         .WithMany("Children")
                         .HasForeignKey("ParentId");
+
+                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("RecipeBook.Core.Entities.Recipe", b =>
@@ -134,6 +142,8 @@ namespace RecipeBook.Infrastructure.Migrations
                         .WithMany("Recipes")
                         .HasForeignKey("CategoryId")
                         .IsRequired();
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("RecipeBook.Core.Entities.RecipeIngredient", b =>
@@ -147,6 +157,27 @@ namespace RecipeBook.Infrastructure.Migrations
                         .WithMany("RecipeIngredients")
                         .HasForeignKey("RecipeId")
                         .IsRequired();
+
+                    b.Navigation("Ingredient");
+
+                    b.Navigation("Recipe");
+                });
+
+            modelBuilder.Entity("RecipeBook.Core.Entities.Category", b =>
+                {
+                    b.Navigation("Children");
+
+                    b.Navigation("Recipes");
+                });
+
+            modelBuilder.Entity("RecipeBook.Core.Entities.Ingredient", b =>
+                {
+                    b.Navigation("RecipeIngredients");
+                });
+
+            modelBuilder.Entity("RecipeBook.Core.Entities.Recipe", b =>
+                {
+                    b.Navigation("RecipeIngredients");
                 });
 #pragma warning restore 612, 618
         }

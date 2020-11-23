@@ -5,20 +5,9 @@ namespace RecipeBook.SharedKernel
 {
     public abstract class BaseEntity
     {
-        private int id;
         private string name;
 
-        public int Id
-        {
-            get => id;
-            set
-            {
-                if (value < 1)
-                    throw new ArgumentException($"Id should be greater than 0. {id} given instead");
-
-                id = value;
-            }
-        }
+        public int Id { get; private set; }
         public string Name
         {
             get => name;

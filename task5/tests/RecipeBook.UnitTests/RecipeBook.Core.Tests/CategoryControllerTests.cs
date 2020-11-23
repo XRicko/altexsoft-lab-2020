@@ -66,14 +66,14 @@ namespace RecipeBook.Core.Tests
         public async Task GetOrCreateCategoryAsync_ShouldReturnNewSubcategoryToParent()
         {
             // Arrange
-            var parentId = 3;
+            var parentId = 0;
             var parentName = "Soups";
             var categoryName = "Hot Soups";
 
             string standardizedCategoryName = categoryName.StandardizeName();
             string standardizedParentName = parentName.StandardizeName();
 
-            var parent = new Category(standardizedParentName) { Id = parentId };
+            var parent = new Category(standardizedParentName);
 
             repoMock.Setup(x => x.GetAsync<Category>(categoryName))
                 .ReturnsAsync(() => null);
