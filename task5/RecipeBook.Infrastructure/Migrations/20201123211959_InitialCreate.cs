@@ -2,7 +2,7 @@
 
 namespace RecipeBook.Infrastructure.Migrations
 {
-    public partial class CreateRecipeBookDB : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -10,16 +10,16 @@ namespace RecipeBook.Infrastructure.Migrations
                 name: "Category",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(maxLength: 75, nullable: false),
-                    ParentId = table.Column<int>(nullable: true)
+                    ParentId = table.Column<int>(type: "int", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(75)", maxLength: 75, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Category", x => x.Id);
                     table.ForeignKey(
-                        name: "FK__Category__Parent__28B808A7",
+                        name: "FK_Category_Category_ParentId",
                         column: x => x.ParentId,
                         principalTable: "Category",
                         principalColumn: "Id",
@@ -30,9 +30,9 @@ namespace RecipeBook.Infrastructure.Migrations
                 name: "Ingredient",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(maxLength: 75, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(75)", maxLength: 75, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -43,19 +43,19 @@ namespace RecipeBook.Infrastructure.Migrations
                 name: "Recipe",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(maxLength: 75, nullable: false),
-                    Description = table.Column<string>(maxLength: 255, nullable: false),
-                    CategoryId = table.Column<int>(nullable: false),
-                    Instruction = table.Column<string>(type: "text", nullable: true),
-                    DurationInMinutes = table.Column<double>(nullable: true)
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Instruction = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DurationInMinutes = table.Column<double>(type: "float", nullable: true),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(75)", maxLength: 75, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Recipe", x => x.Id);
                     table.ForeignKey(
-                        name: "FK__Recipe__Category__2C88998B",
+                        name: "FK_Recipe_Category_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Category",
                         principalColumn: "Id",
@@ -66,23 +66,23 @@ namespace RecipeBook.Infrastructure.Migrations
                 name: "RecipeIngredient",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RecipeId = table.Column<int>(nullable: false),
-                    IngredientId = table.Column<int>(nullable: false),
-                    Amount = table.Column<string>(maxLength: 50, nullable: false)
+                    RecipeId = table.Column<int>(type: "int", nullable: false),
+                    IngredientId = table.Column<int>(type: "int", nullable: false),
+                    Amount = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RecipeIngredient", x => x.Id);
                     table.ForeignKey(
-                        name: "FK__RecipeIng__Ingre__30592A6F",
+                        name: "FK_RecipeIngredient_Ingredient_IngredientId",
                         column: x => x.IngredientId,
                         principalTable: "Ingredient",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK__RecipeIng__Recip__2F650636",
+                        name: "FK_RecipeIngredient_Recipe_RecipeId",
                         column: x => x.RecipeId,
                         principalTable: "Recipe",
                         principalColumn: "Id",
@@ -90,7 +90,7 @@ namespace RecipeBook.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "UQ__Category__8517B2E01CAD4794",
+                name: "IX_Category_Name",
                 table: "Category",
                 column: "Name",
                 unique: true);
@@ -101,7 +101,7 @@ namespace RecipeBook.Infrastructure.Migrations
                 column: "ParentId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ__Ingredie__A1B2F1CC445D2F03",
+                name: "IX_Ingredient_Name",
                 table: "Ingredient",
                 column: "Name",
                 unique: true);
@@ -112,7 +112,7 @@ namespace RecipeBook.Infrastructure.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "UQ__Recipe__9EFE16E92347DBFB",
+                name: "IX_Recipe_Name",
                 table: "Recipe",
                 column: "Name",
                 unique: true);

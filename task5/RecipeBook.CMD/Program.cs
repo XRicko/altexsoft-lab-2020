@@ -6,11 +6,10 @@ using RecipeBook.Core.Controllers;
 using RecipeBook.Core.Entities;
 using RecipeBook.Infrastructure.Extensions;
 using RecipeBook.SharedKernel;
+using RecipeBook.SharedKernel.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace RecipeBook.UI
@@ -38,6 +37,7 @@ namespace RecipeBook.UI
                 Console.WriteLine("Q - exit");
 
                 var key = Console.ReadKey();
+
                 Console.WriteLine();
                 Console.Clear();
 
@@ -57,7 +57,7 @@ namespace RecipeBook.UI
                         logger.LogInformation("Getting records...");
 
                         var categories = await categoryController.GetTopCategoriesAsync();
-                        var recipies = await recipeController.GetRecipesWithoutCategoryAsync();
+                        ICollection<Recipe> recipies = new List<Recipe>();
 
                         while (true)
                         {
@@ -70,19 +70,17 @@ namespace RecipeBook.UI
                             ShowItems(categories);
                             ShowItems(recipies);
 
-                            var name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(Request("Enter name to go next or to see full recipe: ")
-                                .ToLower())
-                                .Trim();
+                            string name = Request("Enter name to go next or to see full recipe: ");
 
-                            var rec = recipies.SingleOrDefault(r => r.Name == name);
-                            var category = categories.SingleOrDefault(c => c.Name == name);
+                            var rec = await recipeController.GetByNameAsync<Recipe>(name);
+                            var category = await categoryController.GetByNameAsync<Category>(name);
 
-                            if (rec != null)
+                            if (!(rec is null))
                             {
                                 ShowRecipe(rec);
                                 break;
                             }
-                            else if (category == null)
+                            else if (category is null)
                                 Console.WriteLine("Invalid input\n");
                             else
                             {
@@ -90,6 +88,7 @@ namespace RecipeBook.UI
                                 categories = category.Children;
                             }
                         }
+
                         break;
                     case ConsoleKey.Q:
                         Environment.Exit(0);
@@ -101,43 +100,46 @@ namespace RecipeBook.UI
             }
         }
 
-        static async Task<Recipe> EnterRecipeAsync(RecipeController recipeController, CategoryController categoryController, IngredientController ingredientController)
+        static async Task<Recipe> EnterRecipeAsync(RecipeController recipeController,
+                                                   CategoryController categoryController,
+                                                   IngredientController ingredientController)
         {
-            var name = Request("Enter name of recipe: ");
-            var categoryName = Request("Enter category (starting with subcats): ");
+            string name = Request("Enter name of recipe: ");
+            string categoryName = Request("Enter category (starting with subcats): ");
 
             Category category;
 
             while (true)
             {
-                var key = Request("Is it a subcategory? (y/n): ");
+                string key = Request("Is it a subcategory? (y/n): ");
 
                 if (key == "y")
                 {
-                    var parentName = Request("Enter parent category: ");
-                    category = await categoryController.CreateCategoryAsync(categoryName, parentName);
+                    string parentName = Request("Enter parent category: ");
+                    var parentCategory = await categoryController.GetByNameAsync<Category>(parentName);
+                    category = await categoryController.GetOrCreateCategoryAsync(categoryName, parentCategory.Id);
 
                     break;
                 }
                 if (key == "n")
                 {
-                    category = await categoryController.CreateCategoryAsync(categoryName);
+                    category = await categoryController.GetOrCreateCategoryAsync(categoryName);
                     break;
                 }
-                else
-                    Console.Write("Invalid input");
+
+                Console.Write("Invalid input");
             }
 
-            var description = Request("Enter a brief description: ");
-            var ingredients = Request("Enter ingredients (comma-separated): ");
+            string description = Request("Enter a brief description: ");
+            string ingredients = Request("Enter ingredients (comma-separated): ");
 
             var recipeIngredients = new List<RecipeIngredient>();
 
-            foreach (var item in GetWords(ingredients))
+            foreach (var item in ingredients.GetWords())
             {
                 var recipeIngredient = new RecipeIngredient
                 {
-                    Ingredient = await ingredientController.CreateIngredientAsync(item)
+                    Ingredient = await ingredientController.GetOrCreateIngredientAsync(item)
                 };
 
                 recipeIngredients.Add(recipeIngredient);
@@ -145,38 +147,25 @@ namespace RecipeBook.UI
 
             foreach (var item in recipeIngredients)
             {
-                var amount = Request($"Enter amount of {item.Ingredient.Name} (e.g., 1 tablespoon, 200 grams): ");
+                string amount = Request($"Enter amount of {item.Ingredient.Name} (e.g., 1 tbsp, 200 grams): ");
                 item.Amount = amount;
             }
 
-            var instruction = Request("Enter instruction: ");
-            var duration = ParseDouble("duration in minutes");
+            string instruction = Request("Enter instruction: ");
+            double duration = ParseDouble("duration in minutes");
 
-            return await recipeController.CreateRecipeAsync(name, category, description, recipeIngredients, instruction, duration);
+            return await recipeController.GetOrCreateRecipeAsync(name, category, description, recipeIngredients, instruction, duration);
         }
 
         static double ParseDouble(string name)
         {
             while (true)
             {
-                if (double.TryParse(Request($"Enter {name}: "), out double value))
-                    return value;
-                else
+                if (!double.TryParse(Request($"Enter {name}: "), out double value))
                     Console.Write($"Invalid input for {name}");
+
+                return value;
             }
-        }
-
-        static List<string> GetWords(string text)
-        {
-            List<string> words = new List<string>();
-
-            string pattern = @"([\w]+(['`]\w+)?([ \w]+)?)";
-            foreach (Match m in Regex.Matches(text, pattern))
-            {
-                words.Add(m.Value);
-            }
-
-            return words;
         }
 
         static void ShowItems<T>(IEnumerable<T> models) where T : BaseEntity

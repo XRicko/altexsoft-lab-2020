@@ -1,4 +1,5 @@
 ﻿using RecipeBook.SharedKernel;
+using RecipeBook.SharedKernel.Extensions;
 using RecipeBook.SharedKernel.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,24 +16,30 @@ namespace RecipeBook.Core.Controllers
             UnitOfWork = unitOfWork;
         }
 
-        public Task<IEnumerable<T>> GetItemsAsync<T>() where T : BaseEntity
-        {
-            return UnitOfWork.Repository.GetAllAsync<T>();
-        }
+        public Task<T> GetByNameAsync<T>(string name) where T : BaseEntity =>
+            UnitOfWork.Repository.GetAsync<T>(name.StandardizeName());
+
+        public Task<T> GetByIdAsync<T>(int id) where T : BaseEntity =>
+            UnitOfWork.Repository.GetAsync<T>(id);
+
+        public Task<IEnumerable<T>> GetItemsAsync<T>() where T : BaseEntity =>
+            UnitOfWork.Repository.GetAllAsync<T>();
 
         public async Task AddItemAsync<T>(T entity) where T : BaseEntity
         {
-            var item = await UnitOfWork.Repository.GetAsync(entity);
+            T item = await UnitOfWork.Repository.GetAsync(entity);
 
-            if (item == null)
+            if (item is null)
             {
-                var items = await UnitOfWork.Repository.GetAllAsync<T>();
-
-                if (items != null && items.Any())
-                    entity.Id = items.Last().Id + 1;
-
                 await UnitOfWork.Repository.AddAsync(entity);
+                await UnitOfWork.SaveAsync();
             }
+        }
+
+        public async Task UpdateAsync<T>(T entity) where T : BaseEntity
+        {
+            UnitOfWork.Repository.Update(entity);
+            await UnitOfWork.SaveAsync();
         }
     }
 }

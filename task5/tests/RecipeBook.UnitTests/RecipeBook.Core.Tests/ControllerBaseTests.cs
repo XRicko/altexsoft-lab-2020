@@ -27,8 +27,10 @@ namespace RecipeBook.Core.Tests
         public async Task GetAllItemsAsync_ShouldReturnList()
         {
             // Arrange
-            var expected = GetSampleData();
+            IEnumerable<Ingredient> expected = GetSampleData();
 
+            repoMock.Setup(x => x.GetAllAsync<Ingredient>())
+                            .ReturnsAsync(expected);
             repoMock.Setup(x => x.GetAllAsync<Ingredient>())
                             .ReturnsAsync(expected);
 
@@ -48,8 +50,6 @@ namespace RecipeBook.Core.Tests
 
             repoMock.Setup(x => x.GetAsync(ingredient))
                 .ReturnsAsync(() => null);
-            repoMock.Setup(x => x.GetAllAsync<Ingredient>())
-                .ReturnsAsync(() => null);
 
             repoMock.Setup(x => x.AddAsync(ingredient));
 
@@ -59,7 +59,6 @@ namespace RecipeBook.Core.Tests
             // Assert
             repoMock.Verify(x => x.AddAsync(ingredient), Times.Once);
             repoMock.Verify(x => x.GetAsync(ingredient), Times.Once);
-            repoMock.Verify(x => x.GetAllAsync<Ingredient>(), Times.Once);
         }
 
         [Fact]

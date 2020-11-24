@@ -1,8 +1,8 @@
 ﻿using RecipeBook.Core.Entities;
 using RecipeBook.Core.Exceptions;
-using RecipeBook.Core.Extensions;
 using RecipeBook.SharedKernel.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RecipeBook.Core.Controllers
@@ -11,18 +11,12 @@ namespace RecipeBook.Core.Controllers
     {
         public RecipeController(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
-        public Task<IEnumerable<Recipe>> GetRecipesWithoutCategoryAsync()
+        public async Task<Recipe> GetOrCreateRecipeAsync(string name, Category category, string desription, List<RecipeIngredient> recipeIngredients, string instruction, double durationInMinutes)
         {
-            return UnitOfWork.Repository.FindAsync<Recipe>(r => r.Category == null);
-        }
+            var recipe = await GetByNameAsync<Recipe>(name);
 
-        public async Task<Recipe> CreateRecipeAsync(string name, Category category, string desription, List<RecipeIngredient> recipeIngredients, string instruction, double durationInMinutes)
-        {
-            var standirdizedName = name.StandardizeName();
-            var recipe = await UnitOfWork.Repository.GetAsync<Recipe>(standirdizedName);
-
-            if (recipe == null)
-                return new Recipe(standirdizedName, category, desription, recipeIngredients, instruction, durationInMinutes);
+            if (recipe is null)
+                return new Recipe(name, category, desription, recipeIngredients, instruction, durationInMinutes);
 
             return recipe;
         }
@@ -31,23 +25,36 @@ namespace RecipeBook.Core.Controllers
         {
             await CheckRecipeForExistenceAsync(recipe);
 
-            await AddItemAsync(recipe);
-            await AddItemAsync(recipe.Category);
-
             foreach (var recipeIngredient in recipe.RecipeIngredients)
             {
                 await AddItemAsync(recipeIngredient.Ingredient);
             }
 
-            await UnitOfWork.SaveAsync();
+            Category category = await UnitOfWork.Repository.GetAsync(recipe.Category);
+
+            if (!(category is null))
+                recipe.Category = category;
+
+            await AddItemAsync(recipe.Category);
+            await AddItemAsync(recipe);
         }
 
         private async Task CheckRecipeForExistenceAsync(Recipe recipe)
         {
-            var r = await UnitOfWork.Repository.GetAsync(recipe);
+            Recipe r = await UnitOfWork.Repository.GetAsync(recipe);
 
-            if (r != null)
+            if (!(r is null))
                 throw new RecipeExistsException(recipe);
+        }
+
+        public async Task<IEnumerable<Recipe>> GetRecipesWithIngredientAsync(int ingredientId)
+        {
+            var recipes = await GetItemsAsync<Recipe>();
+            var recipesWithIngredient = recipes.SelectMany(r => r.RecipeIngredients)
+                .Where(ri => ri.Ingredient.Id == ingredientId)
+                .Select(ri => ri.Recipe);
+                
+            return recipesWithIngredient;
         }
     }
 }

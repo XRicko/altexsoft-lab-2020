@@ -1,7 +1,7 @@
 using Moq;
 using RecipeBook.Core.Controllers;
 using RecipeBook.Core.Entities;
-using RecipeBook.Core.Extensions;
+using RecipeBook.SharedKernel.Extensions;
 using RecipeBook.SharedKernel.Interfaces;
 using System.Threading.Tasks;
 using Xunit;
@@ -31,14 +31,14 @@ namespace RecipeBook.Core.Tests
         }
 
         [Fact]
-        public async Task CreateIngredientAsync_ShouldReturnNewIngredient()
+        public async Task GetOrCreateIngredientAsync_ShouldReturnNewIngredient()
         {
             // Arrange
             repoMock.Setup(x => x.GetAsync<Ingredient>(ingredientName))
                 .ReturnsAsync(() => null);
 
             // Act
-            var actual = await controller.CreateIngredientAsync(ingredientName);
+            Ingredient actual = await controller.GetOrCreateIngredientAsync(ingredientName);
 
             // Arrange
             Assert.Equal(ingredient.Name.StandardizeName(), actual.Name);
@@ -46,14 +46,14 @@ namespace RecipeBook.Core.Tests
         }
 
         [Fact]
-        public async Task CreateIngredientAsync_ShouldReturnExistingIngredient()
+        public async Task GetOrCreateIngredientAsync_ShouldReturnExistingIngredient()
         {
             // Arrange
             repoMock.Setup(x => x.GetAsync<Ingredient>(ingredientName))
                 .ReturnsAsync(ingredient);
 
             // Act
-            var actual = await controller.CreateIngredientAsync(ingredientName);
+            Ingredient actual = await controller.GetOrCreateIngredientAsync(ingredientName);
 
             // Assert
             Assert.Same(ingredient, actual);

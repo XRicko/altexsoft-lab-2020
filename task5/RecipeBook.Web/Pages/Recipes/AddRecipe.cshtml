@@ -1,0 +1,55 @@
+﻿@page
+@model RecipeBook.Web.Pages.Recipes.AddRecipeModel
+@{
+    ViewData["Title"] = "AddRecipe";
+}
+
+<h1>@Model.Message</h1>
+
+<form method="post" class="general-recipe-info">
+    @Html.HiddenFor(m => m.Recipe.Id)
+
+    <div class="form-group">
+        <label asp-for="Recipe.Name">Recipe name</label>
+        <input type="text" asp-for="Recipe.Name" value="@Model.Recipe?.Name" class="form-control " id="recipeName" placeholder="Enter recipe name" required />
+    </div>
+
+    <div class="form-group">
+        <label for="categoryId">Category</label>
+        <select name="categoryId" asp-for="SelectedCategory" asp-items="Model.CategoryOptions" class="form-control" required>
+            <option value="">Choose a category</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Recipe.Description">Brief description</label>
+        <input type="text" asp-for="Recipe.Description" value="@Model.Recipe?.Description" class="form-control" placeholder="Enter a brief description" required />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Ingredients">Ingredients</label>
+        <div>
+            @for (int i = 0; i < Model.Ingredients.Count; i++)
+            {
+                <div class="form-check form-check-inline">
+                    <input name="IngredientsChecked" type="checkbox" class="form-check-input check" data-group="group_@i" value="@Model.Ingredients[i].Id" @(Model.IngredientsChecked.Contains(Model.Ingredients[i].Id) ? "checked" : "") />
+                    <label class="form-check-label" style="margin-right: 5px;" asp-for="Ingredients[i].Name">@Model.Ingredients[i].Name</label>
+
+                    <input type="text" asp-for="Amounts[Model.Ingredients[i].Id - 1]" value="@Model.Amounts[Model.Ingredients[i].Id - 1]" class="form-control amount-field group_@i" readonly placeholder="Enter amount" />
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Recipe.Instruction">Instruction</label>
+        @Html.TextAreaFor(m => m.Recipe.Instruction, new { @class = "form-control", @rows = 4, @placeholder = "Enter instruction", required = "required" })
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Recipe.DurationInMinutes">Duration in minutes</label>
+        <input type="number" min="1" value="@Model.Recipe?.DurationInMinutes" asp-for="Recipe.DurationInMinutes" class="form-control" placeholder="Enter duration" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

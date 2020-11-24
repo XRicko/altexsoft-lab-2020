@@ -1,5 +1,4 @@
 ﻿using RecipeBook.Core.Entities;
-using RecipeBook.Core.Extensions;
 using RecipeBook.SharedKernel.Interfaces;
 using System.Threading.Tasks;
 
@@ -9,13 +8,12 @@ namespace RecipeBook.Core.Controllers
     {
         public IngredientController(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
-        public async Task<Ingredient> CreateIngredientAsync(string name)
+        public async Task<Ingredient> GetOrCreateIngredientAsync(string name)
         {
-            var standardizedName = name.StandardizeName();
-            var ingredient = await UnitOfWork.Repository.GetAsync<Ingredient>(standardizedName);
+            var ingredient = await GetByNameAsync<Ingredient>(name);
 
-            if (ingredient == null)
-                return new Ingredient(standardizedName);
+            if (ingredient is null)
+                return new Ingredient(name);
 
             return ingredient;
         }

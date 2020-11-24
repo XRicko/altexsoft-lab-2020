@@ -1,5 +1,4 @@
 ﻿using RecipeBook.Core.Entities;
-using RecipeBook.Core.Extensions;
 using RecipeBook.SharedKernel.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,36 +9,22 @@ namespace RecipeBook.Core.Controllers
     {
         public CategoryController(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
-        public async Task<Category> CreateCategoryAsync(string name, string parentName = null)
+        public async Task<Category> GetOrCreateCategoryAsync(string name, int? parentId = null)
         {
-            var standardizedName = name.StandardizeName();
-            var category = await UnitOfWork.Repository.GetAsync<Category>(standardizedName);
+            var category = await GetByNameAsync<Category>(name);
 
-            if (category != null)
+            if (!(category is null))
                 return category;
-            if (!string.IsNullOrWhiteSpace(parentName))
+            if (parentId.HasValue)
             {
-                var standardizedParentName = parentName.StandardizeName();
-                var subCategoryName = standardizedName + " " + standardizedParentName;
-                var noDublicatesSubName = subCategoryName.RemoveDublicates();
-
-                var parent = await UnitOfWork.Repository.GetAsync<Category>(standardizedParentName);
-
-                if (parent == null)
-                {
-                    parent = new Category(standardizedParentName);
-                    await AddItemAsync(parent);
-                }
-
-                return new Category(noDublicatesSubName, parent.Id);
+                var parent = await GetByIdAsync<Category>(parentId.Value);
+                return new Category(name, parent.Id);
             }
 
-            return new Category(standardizedName);
+            return new Category(name);
         }
 
-        public Task<IEnumerable<Category>> GetTopCategoriesAsync()
-        {
-            return UnitOfWork.Repository.FindAsync<Category>(c => c.ParentId == null);
-        }
+        public Task<IEnumerable<Category>> GetTopCategoriesAsync() =>
+            UnitOfWork.Repository.FindAsync<Category>(c => !c.ParentId.HasValue);
     }
 }

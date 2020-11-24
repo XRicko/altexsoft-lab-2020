@@ -1,0 +1,25 @@
+﻿@page
+@model RecipeBook.Web.Pages.Ingredients.IngredientsListModel
+@{
+    ViewData["Title"] = "Ingredients";
+}
+
+<div class="text-left">
+    <h1>Ingredients</h1>
+</div>
+
+<div class="card-columns">
+    @foreach (var ingredient in Model.Ingredients)
+    {
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">@ingredient.Name</h5>
+            </div>
+
+            <div class="card-body">
+                <a class="btn btn-outline-info" asp-page="/Recipes/RecipesList" asp-page-handler="WithIngredient" asp-route-ingredientId="@ingredient.Id" asp-route-ingredientName="@ingredient.Name">Recipes</a>
+                <a class="btn btn-light" asp-page="AddIngredient" asp-page-handler="Ingredient" asp-route-id="@ingredient.Id">Edit</a>
+            </div>
+        </div>
+    }
+</div>
